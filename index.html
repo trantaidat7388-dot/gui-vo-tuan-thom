@@ -239,7 +239,7 @@
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
       cursor: pointer;
       transform-style: preserve-3d;
-      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), filter 0.45s ease;
+      transition: transform 1.05s cubic-bezier(0.22, 1, 0.36, 1), filter 0.65s ease;
     }
 
     .envelope::before {
@@ -251,7 +251,7 @@
       border-right: 140px solid transparent;
       border-top: 100px solid #ff758f;
       transform-origin: top;
-      transition: transform 0.65s 0.08s cubic-bezier(0.22, 1, 0.36, 1), z-index 0.2s;
+      transition: transform 1.05s 0.12s cubic-bezier(0.22, 1, 0.36, 1), z-index 0.2s;
     }
 
     .envelope::after {
@@ -278,7 +278,7 @@
       background: #fff;
       border-radius: 4px;
       z-index: 1;
-      transition: transform 0.7s 0.05s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform 1.1s 0.12s cubic-bezier(0.22, 1, 0.36, 1);
       padding: 15px;
       box-sizing: border-box;
     }
@@ -290,7 +290,7 @@
     }
 
     .envelope.open .letter {
-      transform: translateY(-92px);
+      transform: translateY(-96px);
       z-index: 2;
     }
 
@@ -589,6 +589,7 @@
         <p class="text-center text-xs tracking-wider text-sweetpink/80 mb-3">KHOẢNH KHẮC CẦU HÔN</p>
         <div class="w-full rounded-xl bg-black/30 border border-white/10 p-2 mb-3">
           <svg id="proposal-stickman-stage" viewBox="0 0 320 160" class="w-full h-32">
+            <ellipse id="proposal-ground" cx="160" cy="132" rx="130" ry="16" fill="rgba(255,255,255,0.08)"></ellipse>
             <g id="proposal-groom">
               <circle cx="102" cy="44" r="11" fill="none" stroke="#ff9db3" stroke-width="3"></circle>
               <line x1="102" y1="55" x2="102" y2="93" stroke="#ff9db3" stroke-width="4" stroke-linecap="round"></line>
@@ -611,6 +612,10 @@
             <text id="proposal-heart-pop" x="160" y="42" text-anchor="middle" font-size="20" opacity="0">💖</text>
             <path id="proposal-promise-mark" d="M 144 34 C 154 22 166 48 176 34 C 186 20 198 46 208 34" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0"></path>
             <text id="proposal-sparkle" x="178" y="76" text-anchor="middle" font-size="16" opacity="0">✨</text>
+            <text id="proposal-rose" x="88" y="66" text-anchor="middle" font-size="18" opacity="0">🌹</text>
+            <text id="proposal-kiss-mark" x="161" y="52" text-anchor="middle" font-size="20" opacity="0">💋</text>
+            <circle id="proposal-promise-aura" cx="160" cy="74" r="10" fill="none" stroke="#9be7ff" stroke-width="2.5" opacity="0"></circle>
+            <text id="proposal-stars" x="160" y="30" text-anchor="middle" font-size="14" opacity="0">✨ ✨ ✨</text>
           </svg>
         </div>
         <div class="grid grid-cols-1 gap-2.5">
@@ -620,13 +625,9 @@
         </div>
         <p id="proposal-status" class="text-center text-xs text-gray-200 mt-3 min-h-[1.2rem]">Chọn một khoảnh khắc để tiếp tục màn cầu hôn ✨</p>
         <p id="proposal-ending-message" class="text-center text-sm font-bold text-yellow-100 mt-2 opacity-0">🎉 Anh chính thức cầu hôn em! Mình cưới nhau nhé 💍</p>
+        <p id="proposal-grand-ending" class="text-center text-[13px] font-semibold text-pink-100 mt-1 opacity-0">💞 Từ khoảnh khắc này, anh và em là một gia đình nhỏ.</p>
       </div>
     </div>
-
-    <!-- Replay button absolute at bottom -->
-    <button id="replay-btn" class="text-xs text-sweetpink/80 hover:text-sweetpink hover:underline font-semibold flex items-center gap-1.5 z-50 bg-black/40 px-4 py-2 rounded-full border border-sweetpink/25">
-      <span>🔄 Xem lại từ đầu</span>
-    </button>
   </div>
 
   <!-- JavaScript Code Section -->
@@ -1692,11 +1693,11 @@
     const envelopeTrigger = document.getElementById('envelope-trigger');
     const yesBtn = document.getElementById('yes-btn');
     const noBtn = document.getElementById('no-btn');
-    const replayBtn = document.getElementById('replay-btn');
     const textContainer = document.getElementById('confession-text-box');
     const proposalPanel = document.getElementById('proposal-actions');
     const proposalStatus = document.getElementById('proposal-status');
     const proposalEndingMessage = document.getElementById('proposal-ending-message');
+    const proposalGrandEnding = document.getElementById('proposal-grand-ending');
     const proposalButtons = document.querySelectorAll('.proposal-btn');
     const proposalGroom = document.getElementById('proposal-groom');
     const proposalBride = document.getElementById('proposal-bride');
@@ -1704,6 +1705,12 @@
     const proposalHeartPop = document.getElementById('proposal-heart-pop');
     const proposalPromiseMark = document.getElementById('proposal-promise-mark');
     const proposalSparkle = document.getElementById('proposal-sparkle');
+    const proposalRose = document.getElementById('proposal-rose');
+    const proposalKissMark = document.getElementById('proposal-kiss-mark');
+    const proposalPromiseAura = document.getElementById('proposal-promise-aura');
+    const proposalStars = document.getElementById('proposal-stars');
+    const groomArm = document.getElementById('groom-arm');
+    const brideArm = document.getElementById('bride-arm');
     let isEnvelopeTransitioning = false;
     const completedProposalActions = new Set();
     let proposalFinaleDone = false;
@@ -1727,6 +1734,12 @@
       gsap.set(proposalHeartPop, { opacity: 0, y: 0, scale: 1, transformOrigin: '160px 42px' });
       gsap.set(proposalPromiseMark, { opacity: 0, scale: 1, transformOrigin: '176px 34px' });
       gsap.set(proposalSparkle, { opacity: 0, y: 0, scale: 1, transformOrigin: '178px 76px' });
+      gsap.set(proposalRose, { opacity: 0, y: 0, x: 0, rotation: 0, transformOrigin: '88px 66px' });
+      gsap.set(proposalKissMark, { opacity: 0, y: 0, scale: 1, transformOrigin: '161px 52px' });
+      gsap.set(proposalPromiseAura, { opacity: 0, scale: 0.7, transformOrigin: '160px 74px' });
+      gsap.set(proposalStars, { opacity: 0, y: 0, scale: 1, transformOrigin: '160px 30px' });
+      gsap.set(groomArm, { attr: { x2: 124, y2: 78 } });
+      gsap.set(brideArm, { attr: { x2: 202, y2: 79 } });
     }
 
     function playProposalAnimation(type) {
@@ -1735,26 +1748,37 @@
 
       if (type === 'ring') {
         proposalActionTimeline
-          .to(proposalGroom, { x: 24, y: 8, rotation: 16, duration: 0.45, ease: "power2.out" })
-          .to(proposalRing, { opacity: 1, duration: 0.15 }, "<")
-          .to(proposalRing, { attr: { cx: 203, cy: 78 }, duration: 0.45, ease: "power2.inOut" })
-          .to(proposalSparkle, { opacity: 1, scale: 1.2, duration: 0.2 }, "-=0.15")
-          .to(proposalSparkle, { opacity: 0, y: -10, duration: 0.35 })
-          .to([proposalGroom, proposalBride], { y: -4, duration: 0.22, yoyo: true, repeat: 1, ease: "sine.inOut" }, "<");
+          .to(proposalGroom, { x: 18, y: 6, duration: 0.35, ease: "power2.out" })
+          .to(proposalGroom, { x: 34, y: 12, rotation: 18, duration: 0.5, ease: "back.out(1.4)" })
+          .to(groomArm, { attr: { x2: 150, y2: 88 }, duration: 0.28, ease: "power1.out" }, "<")
+          .to(proposalRose, { opacity: 1, x: 30, y: -4, rotation: 12, duration: 0.4 }, "<")
+          .to(proposalRing, { opacity: 1, duration: 0.12 }, "-=0.2")
+          .to(proposalRing, { attr: { cx: 203, cy: 78 }, duration: 0.55, ease: "power2.inOut" })
+          .to(proposalSparkle, { opacity: 1, scale: 1.35, duration: 0.18 }, "-=0.18")
+          .to(proposalStars, { opacity: 1, y: -8, duration: 0.25 }, "<")
+          .to([proposalSparkle, proposalStars], { opacity: 0, y: -14, duration: 0.4 })
+          .to([proposalGroom, proposalBride], { y: -5, duration: 0.2, yoyo: true, repeat: 2, ease: "sine.inOut" }, "<");
       } else if (type === 'kiss') {
         proposalActionTimeline
-          .to(proposalGroom, { x: 36, duration: 0.5, ease: "power2.out" })
-          .to(proposalBride, { x: -30, duration: 0.5, ease: "power2.out" }, "<")
-          .to(proposalHeartPop, { opacity: 1, y: -18, scale: 1.25, duration: 0.35, ease: "back.out(1.8)" })
-          .to(proposalHeartPop, { opacity: 0, y: -30, scale: 1, duration: 0.45, ease: "power1.in" });
+          .to(proposalGroom, { x: 40, duration: 0.55, ease: "power2.out" })
+          .to(proposalBride, { x: -34, duration: 0.55, ease: "power2.out" }, "<")
+          .to(groomArm, { attr: { x2: 145, y2: 74 }, duration: 0.22 }, "-=0.2")
+          .to(brideArm, { attr: { x2: 181, y2: 74 }, duration: 0.22 }, "<")
+          .to(proposalHeartPop, { opacity: 1, y: -18, scale: 1.35, duration: 0.25, ease: "back.out(1.8)" })
+          .to(proposalKissMark, { opacity: 1, y: -12, scale: 1.2, duration: 0.2 }, "<")
+          .to([proposalHeartPop, proposalKissMark], { opacity: 0, y: -30, duration: 0.45, ease: "power1.in" })
+          .to([proposalGroom, proposalBride], { y: -4, duration: 0.18, yoyo: true, repeat: 2, ease: "sine.inOut" }, "<");
       } else if (type === 'promise') {
         proposalActionTimeline
-          .to(proposalGroom, { x: 20, duration: 0.4, ease: "power2.out" })
-          .to(proposalBride, { x: -20, duration: 0.4, ease: "power2.out" }, "<")
-          .to(proposalPromiseMark, { opacity: 1, scale: 1.12, duration: 0.35, ease: "power2.out" })
-          .to(proposalPromiseMark, { scale: 0.96, duration: 0.3, yoyo: true, repeat: 1, ease: "sine.inOut" })
-          .to(proposalSparkle, { opacity: 1, y: -8, duration: 0.25 }, "-=0.35")
-          .to(proposalSparkle, { opacity: 0, y: -16, duration: 0.3 });
+          .to(proposalGroom, { x: 24, duration: 0.45, ease: "power2.out" })
+          .to(proposalBride, { x: -24, duration: 0.45, ease: "power2.out" }, "<")
+          .to(groomArm, { attr: { x2: 156, y2: 78 }, duration: 0.28 }, "-=0.25")
+          .to(brideArm, { attr: { x2: 170, y2: 78 }, duration: 0.28 }, "<")
+          .to(proposalPromiseMark, { opacity: 1, scale: 1.15, duration: 0.3, ease: "power2.out" })
+          .to(proposalPromiseAura, { opacity: 1, scale: 1.6, duration: 0.35, ease: "power1.out" }, "<")
+          .to(proposalStars, { opacity: 1, y: -10, duration: 0.22 }, "-=0.15")
+          .to([proposalPromiseMark, proposalPromiseAura, proposalStars], { opacity: 0, y: -14, duration: 0.45 })
+          .to([proposalGroom, proposalBride], { y: -4, duration: 0.18, yoyo: true, repeat: 2, ease: "sine.inOut" }, "<");
       }
     }
 
@@ -1764,6 +1788,9 @@
       proposalStatus.textContent = "Anh đã làm hết 3 lời hứa, giờ là đoạn kết của chúng mình 💞";
       if (proposalEndingMessage) {
         gsap.to(proposalEndingMessage, { opacity: 1, duration: 0.65, ease: "power2.out" });
+      }
+      if (proposalGrandEnding) {
+        gsap.to(proposalGrandEnding, { opacity: 1, duration: 0.7, delay: 0.25, ease: "power2.out" });
       }
       setTimeout(() => {
         shootHeartFirework(screenWidth * 0.2, screenHeight * 0.28, 75);
@@ -1782,6 +1809,9 @@
       }
       if (proposalEndingMessage) {
         proposalEndingMessage.style.opacity = '0';
+      }
+      if (proposalGrandEnding) {
+        proposalGrandEnding.style.opacity = '0';
       }
       resetProposalStageVisuals();
     }
@@ -1802,7 +1832,7 @@
       const progress = `${completedProposalActions.size}/3`;
       proposalStatus.textContent = `${labels[type] || "Khoảnh khắc này thật đẹp!"} • Hoàn thành ${progress}`;
       gsap.fromTo(proposalStatus, { scale: 0.92, opacity: 0.55 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(1.7)" });
-      shootHeartFirework(screenWidth * 0.5, screenHeight * 0.3, 40);
+      shootHeartFirework(screenWidth * 0.5, screenHeight * 0.3, 55);
       triggerProposalFinaleIfDone();
     }
 
@@ -1823,17 +1853,17 @@
       
       // Cho chim bay đi mất và dừng bồng bềnh
       gsap.killTweensOf([envelopeTrigger, "#left-carrier", "#right-carrier"]);
-      gsap.to("#left-carrier", { x: -300, y: -250, opacity: 0, scale: 0.5, duration: 1.0, ease: "power2.in" });
-      gsap.to("#right-carrier", { x: 300, y: -250, opacity: 0, scale: 0.5, duration: 1.0, ease: "power2.in" });
+      gsap.to("#left-carrier", { x: -300, y: -250, opacity: 0, scale: 0.5, duration: 1.35, ease: "power2.in" });
+      gsap.to("#right-carrier", { x: 300, y: -250, opacity: 0, scale: 0.5, duration: 1.35, ease: "power2.in" });
 
       // Mở hộp thư
       mainEnvelope.classList.add('opening');
       gsap.timeline()
-        .to(mainEnvelope, { y: -12, scale: 1.05, duration: 0.26, ease: "power2.out" })
+        .to(mainEnvelope, { y: -16, scale: 1.06, duration: 0.55, ease: "power2.out" })
         .add(() => {
           mainEnvelope.classList.add('open');
         })
-        .to(mainEnvelope, { y: 0, scale: 1, duration: 0.52, ease: "back.out(1.5)" })
+        .to(mainEnvelope, { y: 0, scale: 1, duration: 1.1, ease: "back.out(1.25)" })
         .add(() => {
           mainEnvelope.classList.remove('opening');
         });
@@ -1848,7 +1878,7 @@
       const envelopeCenterX = rect.left + rect.width / 2;
       const envelopeCenterY = rect.top + rect.height / 2;
       spawnConfetti(envelopeCenterX, envelopeCenterY);
-      setTimeout(() => spawnConfetti(envelopeCenterX, envelopeCenterY - 24), 140);
+      setTimeout(() => spawnConfetti(envelopeCenterX, envelopeCenterY - 24), 280);
 
       // Animation chuyển tiếp bằng GSAP
       gsap.timeline()
@@ -1856,8 +1886,8 @@
         .to(hookView, {
           opacity: 0,
           scale: 0.85,
-          duration: 1.0,
-          delay: 0.35,
+          duration: 1.25,
+          delay: 0.65,
           onComplete: () => {
             hookView.classList.add('hidden');
             storyView.classList.remove('hidden');
@@ -2011,118 +2041,6 @@
         .to(successView, {
           opacity: 1,
           duration: 0.8
-        });
-    });
-
-    // CHỨC NĂNG XEM LẠI TỪ ĐẦU (Reset)
-    replayBtn.addEventListener('click', () => {
-      isSuccessState = false;
-      isEnvelopeOpened = false;
-      successFrameCount = 0;
-      successParticles.length = 0;
-      noAttempts = 0;
-      yesScale = 1;
-      noScale = 1;
-
-      // Ẩn cặp đôi chạy 2D & reset transform hoạt ảnh bay lên
-      const coupleContainer = document.getElementById('running-couple-container');
-      if (coupleContainer) {
-        coupleContainer.style.opacity = '0';
-        const svg = coupleContainer.querySelector('svg');
-        if (svg) {
-          gsap.set(svg, { y: 0, scale: 1 });
-        }
-        const road = coupleContainer.querySelector('.animate-road-scroll');
-        if (road) {
-          road.parentElement.style.opacity = '1';
-        }
-      }
-
-      // Đặt lại mặt trăng và tim bay
-      const moonRound = document.getElementById('moon-round');
-      const moonHeart = document.getElementById('moon-heart');
-      if (moonRound) moonRound.style.opacity = '1';
-      if (moonHeart) moonHeart.style.opacity = '0';
-
-      const chibiHeart = document.getElementById('chibi-love-heart');
-      if (chibiHeart) chibiHeart.classList.add('opacity-0');
-
-      // Reset Finale: dừng pháo hoa, ẩn overlay, xóa cánh hoa
-      finaleRunning = false;
-      finaleParticles.length = 0;
-      finaleCanvas.style.opacity = '0';
-      finCtx.clearRect(0, 0, finaleCanvas.width, finaleCanvas.height);
-
-      const overlay = document.getElementById('finale-love-overlay');
-      if (overlay) overlay.style.opacity = '0';
-
-      const mainTxt = document.getElementById('finale-main-text');
-      if (mainTxt) mainTxt.style.opacity = '0';
-      const subTxt = document.getElementById('finale-sub-text');
-      if (subTxt) subTxt.style.opacity = '0';
-      const heartsRow = document.getElementById('finale-hearts-row');
-      if (heartsRow) heartsRow.style.opacity = '0';
-      const finHeart = document.getElementById('finale-heart-burst');
-      if (finHeart) { finHeart.style.opacity = '0'; finHeart.style.transform = 'scale(1)'; }
-      if (proposalPanel) {
-        proposalPanel.style.opacity = '0';
-        proposalPanel.style.transform = 'translateY(16px)';
-        proposalPanel.style.pointerEvents = 'none';
-      }
-      resetProposalExperience();
-
-      // Xóa các cánh hoa anh đào khỏi DOM
-      document.querySelectorAll('.sakura-petal').forEach(p => p.remove());
-
-      // Khôi phục animation chân chạy và nhún chibi
-      const legs = document.querySelectorAll('.animate-leg-left, .animate-leg-right, .animate-leg-left-boy2, .animate-leg-right-boy2');
-      legs.forEach(leg => {
-        leg.style.animation = '';
-        leg.style.transform = '';
-      });
-      const chibiGroup = document.querySelector('.animate-chibi-bob');
-      if (chibiGroup) {
-        chibiGroup.style.animation = '';
-      }
-
-      // Đặt lại style nút từ chối
-      noBtn.style.display = 'block';
-      noBtn.style.position = 'static';
-      noBtn.style.transform = 'scale(1)';
-      noBtn.style.left = 'auto';
-      noBtn.style.top = 'auto';
-      
-      gsap.set(yesBtn, { scale: 1 });
-      gsap.set(noBtn, { scale: 1, opacity: 1 });
-
-      // Chuyển cảnh về Hook
-      gsap.timeline()
-        .to(successView, {
-          opacity: 0,
-          duration: 0.6,
-          onComplete: () => {
-            successView.classList.add('hidden');
-            mainEnvelope.classList.remove('open');
-            mainEnvelope.classList.remove('opening');
-            hookView.classList.remove('hidden');
-            envelopeTrigger.style.pointerEvents = 'auto';
-            isEnvelopeTransitioning = false;
-            
-            // Dừng nhạc
-            bgMusic.pause();
-            bgMusic.currentTime = 0;
-            
-            document.body.classList.remove('story-bg');
-            document.body.classList.add('dynamic-bg');
-          }
-        })
-        .to(hookView, {
-          opacity: 1,
-          scale: 1,
-          duration: 0.6,
-          onComplete: () => {
-            playCarrierIntro();
-          }
         });
     });
 
