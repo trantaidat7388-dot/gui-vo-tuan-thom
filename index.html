@@ -238,7 +238,7 @@
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
       cursor: pointer;
       transform-style: preserve-3d;
-      transition: transform 0.5s;
+      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), filter 0.45s ease;
     }
 
     .envelope::before {
@@ -250,7 +250,7 @@
       border-right: 140px solid transparent;
       border-top: 100px solid #ff758f;
       transform-origin: top;
-      transition: transform 0.4s 0.2s, z-index 0.2s;
+      transition: transform 0.65s 0.08s cubic-bezier(0.22, 1, 0.36, 1), z-index 0.2s;
     }
 
     .envelope::after {
@@ -277,7 +277,7 @@
       background: #fff;
       border-radius: 4px;
       z-index: 1;
-      transition: transform 0.5s 0.1s;
+      transition: transform 0.7s 0.05s cubic-bezier(0.22, 1, 0.36, 1);
       padding: 15px;
       box-sizing: border-box;
     }
@@ -289,12 +289,15 @@
     }
 
     .envelope.open .letter {
-      transform: translateY(-80px);
+      transform: translateY(-92px);
       z-index: 2;
     }
 
     .envelope.open {
       animation: floatEnvelope 3s ease-in-out infinite alternate;
+    }
+    .envelope.opening {
+      filter: drop-shadow(0 0 22px rgba(255, 145, 170, 0.9));
     }
 
     @keyframes floatEnvelope {
@@ -574,6 +577,17 @@
       <p class="finale-sub-text text-center text-sweetpink/90 font-semibold text-sm md:text-base mt-2 tracking-widest" style="opacity:0; transition: opacity 1.5s 1.2s; text-shadow: 0 0 12px rgba(255,117,143,0.8);" id="finale-sub-text">Dù trời đất có đổi thay, anh vẫn chọn em 🌙</p>
       <!-- Floating hearts row -->
       <div id="finale-hearts-row" class="flex gap-3 mt-6 text-2xl opacity-0 transition-opacity duration-[2000ms]" style="transition-delay: 2s;">💗 💜 💗 💜 💗</div>
+
+      <!-- Proposal activities -->
+      <div id="proposal-actions" class="mt-7 w-full max-w-sm glass-card rounded-2xl p-4 opacity-0 translate-y-4 transition-all duration-700 pointer-events-none">
+        <p class="text-center text-xs tracking-wider text-sweetpink/80 mb-3">KHOẢNH KHẮC CẦU HÔN</p>
+        <div class="grid grid-cols-1 gap-2.5">
+          <button class="proposal-btn bg-sweetpink/80 hover:bg-sweetpink text-white font-bold rounded-xl py-2.5 text-sm" data-proposal="ring">💍 Đeo nhẫn cho em</button>
+          <button class="proposal-btn bg-purple-500/80 hover:bg-purple-500 text-white font-bold rounded-xl py-2.5 text-sm" data-proposal="kiss">😘 Trao nụ hôn đầu tiên</button>
+          <button class="proposal-btn bg-cyan-500/80 hover:bg-cyan-500 text-white font-bold rounded-xl py-2.5 text-sm" data-proposal="promise">🤝 Hứa bên nhau trọn đời</button>
+        </div>
+        <p id="proposal-status" class="text-center text-xs text-gray-200 mt-3 min-h-[1.2rem]">Chọn một khoảnh khắc để tiếp tục màn cầu hôn ✨</p>
+      </div>
     </div>
 
     <!-- Replay button absolute at bottom -->
@@ -1214,7 +1228,7 @@
       }
 
       update(time) {
-        if (time < 120) {
+        if (time < 70) {
           this.angle += this.rotSpeed;
           this.radius -= this.radialSpeed;
           if (this.radius < 5) this.radius = 100 + Math.random() * 300;
@@ -1223,22 +1237,22 @@
           this.opacity += this.blinkSpeed;
           if (this.opacity > 1 || this.opacity < 0.2) this.blinkSpeed = -this.blinkSpeed;
 
-        } else if (time >= 120 && time < 175) {
-          if (time === 120) { this.morphStartX = this.x; this.morphStartY = this.y; }
-          const p1 = (time - 120) / 55;
+        } else if (time >= 70 && time < 102) {
+          if (time === 70) { this.morphStartX = this.x; this.morphStartY = this.y; }
+          const p1 = (time - 70) / 32;
           const e1 = p1 * p1 * (3 - 2 * p1);
           this.x = this.morphStartX + (this.targetX1 - this.morphStartX) * e1;
           this.y = this.morphStartY + (this.targetY1 - this.morphStartY) * e1;
           this.opacity = 0.95;
 
-        } else if (time >= 175 && time < 310) {
+        } else if (time >= 102 && time < 170) {
           this.x = this.targetX1 + (Math.random() - 0.5) * 0.5;
           this.y = this.targetY1 + (Math.random() - 0.5) * 0.5;
           this.opacity += this.blinkSpeed;
           if (this.opacity > 1 || this.opacity < 0.3) this.blinkSpeed = -this.blinkSpeed;
 
-        } else if (time >= 310 && time < 350) {
-          if (time === 310) {
+        } else if (time >= 170 && time < 194) {
+          if (time === 170) {
             const angle = Math.random() * Math.PI * 2;
             const force = 3.5 + Math.random() * 8.0;
             this.vx = Math.cos(angle) * force;
@@ -1247,15 +1261,15 @@
           this.x += this.vx; this.y += this.vy;
           this.vx *= 0.93;   this.vy *= 0.93;
 
-        } else if (time >= 350 && time < 405) {
-          if (time === 350) { this.morphStartX2 = this.x; this.morphStartY2 = this.y; }
-          const p2 = (time - 350) / 55;
+        } else if (time >= 194 && time < 226) {
+          if (time === 194) { this.morphStartX2 = this.x; this.morphStartY2 = this.y; }
+          const p2 = (time - 194) / 32;
           const e2 = p2 * p2 * (3 - 2 * p2);
           this.x = this.morphStartX2 + (this.targetX2 - this.morphStartX2) * e2;
           this.y = this.morphStartY2 + (this.targetY2 - this.morphStartY2) * e2;
           this.opacity = 0.95;
 
-        } else if (time >= 405 && time < 560) {
+        } else if (time >= 226 && time < 305) {
           this.x = this.targetX2 + (Math.random() - 0.5) * 0.5;
           this.y = this.targetY2 + (Math.random() - 0.5) * 0.5;
           this.opacity += this.blinkSpeed;
@@ -1274,15 +1288,15 @@
         fCtx.shadowBlur = this.size * 2.5;
         fCtx.shadowColor = this.color.replace('rgba', 'rgb').split(',').slice(0,3).join(',') + ')';
 
-        if ((time >= 120 && time < 175) || (time >= 350 && time < 405)) {
-          const targetX = time < 175 ? this.targetX1 : this.targetX2;
-          const targetY = time < 175 ? this.targetY1 : this.targetY2;
+        if ((time >= 70 && time < 102) || (time >= 194 && time < 226)) {
+          const targetX = time < 102 ? this.targetX1 : this.targetX2;
+          const targetY = time < 102 ? this.targetY1 : this.targetY2;
           fCtx.strokeStyle = this.color + (this.opacity * 0.4) + ')';
           fCtx.lineWidth = this.size * 0.7;
           fCtx.beginPath();
           const angleRad = Math.atan2(targetY - this.y, targetX - this.x);
           fCtx.moveTo(this.x, this.y);
-          fCtx.lineTo(this.x - Math.cos(angleRad) * 18, this.y - Math.sin(angleRad) * 18);
+          fCtx.lineTo(this.x - Math.cos(angleRad) * 26, this.y - Math.sin(angleRad) * 26);
           fCtx.stroke();
         }
 
@@ -1341,8 +1355,8 @@
           p.draw(successFrameCount);
         });
 
-        // Kích hoạt transition 2D running couple ở frame 660
-        if (successFrameCount === 660) {
+        // Kích hoạt transition 2D running couple ở frame sớm hơn
+        if (successFrameCount === 360) {
           const coupleContainer = document.getElementById('running-couple-container');
           if (coupleContainer) {
             coupleContainer.style.opacity = '1';
@@ -1356,8 +1370,8 @@
           });
         }
 
-        // Frame 820: Cặp đôi dừng chạy, bay lên mặt trăng, mặt trăng đổi sang hình trái tim
-        if (successFrameCount === 820) {
+        // Frame tiếp theo: Cặp đôi dừng chạy, bay lên mặt trăng, mặt trăng đổi sang hình trái tim
+        if (successFrameCount === 440) {
           // Dừng chuyển động chân chạy và nhún chibi
           const legs = document.querySelectorAll('.animate-leg-left, .animate-leg-right, .animate-leg-left-boy2, .animate-leg-right-boy2');
           legs.forEach(leg => {
@@ -1395,8 +1409,8 @@
           if (chibiHeart) chibiHeart.classList.remove('opacity-0');
         }
 
-        // Frame 960: SPECTACULAR FINALE — Heart Fireworks + Sakura + Love Message
-        if (successFrameCount === 960) {
+        // Frame finale: Heart Fireworks + Sakura + Love Message
+        if (successFrameCount === 520) {
           launchFinaleSequence();
         }
       }
@@ -1558,6 +1572,12 @@
 
         const heartsRow = document.getElementById('finale-hearts-row');
         if (heartsRow) heartsRow.style.opacity = '1';
+
+        if (proposalPanel) {
+          proposalPanel.style.opacity = '1';
+          proposalPanel.style.transform = 'translateY(0)';
+          proposalPanel.style.pointerEvents = 'auto';
+        }
       }, 900);
 
       // Continuous gentle bursts after reveal
@@ -1640,6 +1660,10 @@
     const noBtn = document.getElementById('no-btn');
     const replayBtn = document.getElementById('replay-btn');
     const textContainer = document.getElementById('confession-text-box');
+    const proposalPanel = document.getElementById('proposal-actions');
+    const proposalStatus = document.getElementById('proposal-status');
+    const proposalButtons = document.querySelectorAll('.proposal-btn');
+    let isEnvelopeTransitioning = false;
 
     // Nổ hoa giấy trái tim khi mở thư (Confetti Effect)
     function spawnConfetti(x, y) {
@@ -1648,20 +1672,51 @@
       }
     }
 
+    function triggerProposalMoment(type) {
+      const labels = {
+        ring: "Em nhận nhẫn rồi nha anh 💍",
+        kiss: "Nụ hôn đầu tiên đã được lưu lại 😘",
+        promise: "Hai đứa mình hứa bên nhau đến bạc đầu 🤍"
+      };
+      proposalStatus.textContent = labels[type] || "Khoảnh khắc này thật đẹp!";
+      gsap.fromTo(proposalStatus, { scale: 0.92, opacity: 0.55 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(1.7)" });
+      spawnConfetti(screenWidth / 2, screenHeight * 0.42);
+      shootHeartFirework(screenWidth * 0.35, screenHeight * 0.34, 45);
+      shootHeartFirework(screenWidth * 0.65, screenHeight * 0.34, 45);
+    }
+
+    proposalButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        triggerProposalMoment(btn.dataset.proposal);
+      });
+    });
+
     // GIAI ĐOẠN 1 -> GIAI ĐOẠN 2: MỞ THƯ
     envelopeTrigger.addEventListener('click', () => {
+      if (isEnvelopeTransitioning) return;
+      isEnvelopeTransitioning = true;
+      envelopeTrigger.style.pointerEvents = 'none';
+
       // Kích hoạt hiệu ứng trái tim bay lên nền
       isEnvelopeOpened = true;
       
       // Cho chim bay đi mất và dừng bồng bềnh
       gsap.killTweensOf([envelopeTrigger, "#left-carrier", "#right-carrier"]);
-      gsap.to(envelopeTrigger, { rotation: 0, y: 0, duration: 0.4 });
-      gsap.to("#left-carrier", { x: -300, y: -250, opacity: 0, scale: 0.5, duration: 1.2, ease: "power2.in" });
-      gsap.to("#right-carrier", { x: 300, y: -250, opacity: 0, scale: 0.5, duration: 1.2, ease: "power2.in" });
+      gsap.to("#left-carrier", { x: -300, y: -250, opacity: 0, scale: 0.5, duration: 1.0, ease: "power2.in" });
+      gsap.to("#right-carrier", { x: 300, y: -250, opacity: 0, scale: 0.5, duration: 1.0, ease: "power2.in" });
 
       // Mở hộp thư
-      mainEnvelope.classList.add('open');
-      
+      mainEnvelope.classList.add('opening');
+      gsap.timeline()
+        .to(mainEnvelope, { y: -12, scale: 1.05, duration: 0.26, ease: "power2.out" })
+        .add(() => {
+          mainEnvelope.classList.add('open');
+        })
+        .to(mainEnvelope, { y: 0, scale: 1, duration: 0.52, ease: "back.out(1.5)" })
+        .add(() => {
+          mainEnvelope.classList.remove('opening');
+        });
+
       // Phát nhạc nền
       bgMusic.play().catch(err => {
         console.log("Autoplay bị chặn hoặc nhạc chưa load xong: ", err);
@@ -1672,13 +1727,16 @@
       const envelopeCenterX = rect.left + rect.width / 2;
       const envelopeCenterY = rect.top + rect.height / 2;
       spawnConfetti(envelopeCenterX, envelopeCenterY);
+      setTimeout(() => spawnConfetti(envelopeCenterX, envelopeCenterY - 24), 140);
 
       // Animation chuyển tiếp bằng GSAP
       gsap.timeline()
+        .to(envelopeTrigger, { rotation: 0, y: 0, duration: 0.35 }, 0)
         .to(hookView, {
           opacity: 0,
           scale: 0.85,
-          duration: 0.8,
+          duration: 1.0,
+          delay: 0.35,
           onComplete: () => {
             hookView.classList.add('hidden');
             storyView.classList.remove('hidden');
@@ -1694,6 +1752,7 @@
           onComplete: () => {
             // Chạy hiệu ứng gõ chữ
             startTypingEffect(CONFIG.confessionText);
+            isEnvelopeTransitioning = false;
           }
         });
     });
@@ -1884,6 +1943,14 @@
       if (heartsRow) heartsRow.style.opacity = '0';
       const finHeart = document.getElementById('finale-heart-burst');
       if (finHeart) { finHeart.style.opacity = '0'; finHeart.style.transform = 'scale(1)'; }
+      if (proposalPanel) {
+        proposalPanel.style.opacity = '0';
+        proposalPanel.style.transform = 'translateY(16px)';
+        proposalPanel.style.pointerEvents = 'none';
+      }
+      if (proposalStatus) {
+        proposalStatus.textContent = 'Chọn một khoảnh khắc để tiếp tục màn cầu hôn ✨';
+      }
 
       // Xóa các cánh hoa anh đào khỏi DOM
       document.querySelectorAll('.sakura-petal').forEach(p => p.remove());
@@ -1917,7 +1984,10 @@
           onComplete: () => {
             successView.classList.add('hidden');
             mainEnvelope.classList.remove('open');
+            mainEnvelope.classList.remove('opening');
             hookView.classList.remove('hidden');
+            envelopeTrigger.style.pointerEvents = 'auto';
+            isEnvelopeTransitioning = false;
             
             // Dừng nhạc
             bgMusic.pause();
