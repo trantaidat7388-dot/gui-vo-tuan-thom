@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Gửi Người Anh Yêu Thương ❤️</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Trang web tỏ tình lãng mạn tích hợp hiệu ứng sao băng, pháo hoa trái tim và tương tác cảm ứng cực sống động.">
+  <meta name="keywords" content="tỏ tình, love confession, love web, hiệu ứng trái tim, sao băng, pháo hoa">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Outfit:wght@300;400;600;700;800&family=Playpen+Sans:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- GSAP for smooth animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            cursive: ['Caveat', 'cursive'],
+            handwritten: ['Playpen Sans', 'sans-serif'],
+          },
+          colors: {
+            sweetpink: '#ff758f',
+            deeppurple: '#4a154b',
+            neoncyan: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom CSS Styles */
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0b0c10;
+      color: #ffffff;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    /* Custom Glassmorphism styling */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    @keyframes borderGlow {
+      0%, 100% { border-color: rgba(255, 117, 143, 0.4); box-shadow: 0 0 15px rgba(255, 117, 143, 0.2); }
+      50% { border-color: rgba(6, 182, 212, 0.7); box-shadow: 0 0 25px rgba(6, 182, 212, 0.4); }
+    }
+    .animated-border {
+      animation: borderGlow 4s infinite alternate;
+      border-width: 2px;
+    }
+    @keyframes pulseYes {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(255, 117, 143, 0.65); }
+      50% { transform: scale(1.06); box-shadow: 0 0 25px rgba(255, 117, 143, 0.95); }
+    }
+    .pulse-yes {
+      animation: pulseYes 1.8s infinite ease-in-out;
+    }
+
+    /* Glowing effects */
+    .neon-glow-pink {
+      box-shadow: 0 0 20px rgba(255, 117, 143, 0.6), inset 0 0 10px rgba(255, 117, 143, 0.3);
+    }
+    
+    .neon-glow-cyan {
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.6), inset 0 0 10px rgba(6, 182, 212, 0.3);
+    }
+
+    .neon-text-pink {
+      text-shadow: 0 0 8px rgba(255, 117, 143, 0.8), 0 0 20px rgba(255, 117, 143, 0.4);
+    }
+
+    @keyframes wingFlap {
+      0%, 100% { transform: translateY(0) scale(1) rotate(-8deg); }
+      50% { transform: translateY(-8px) scale(1.08) rotate(8deg); }
+    }
+    .animate-wing-flap {
+      animation: wingFlap 1.0s infinite ease-in-out;
+      display: inline-block;
+    }
+
+    /* Dynamic gradient backgrounds */
+    .dynamic-bg {
+      background: linear-gradient(135deg, #090a0f, #1b0f24, #2a0827, #071720);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+    }
+
+    .story-bg {
+      background: linear-gradient(-45deg, #23153c, #160a22, #471131, #0c2533);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Custom scrollbar just in case */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 117, 143, 0.5);
+      border-radius: 10px;
+    }
+
+    /* Envelope animation styling */
+    .envelope-wrapper {
+      perspective: 1000px;
+    }
+
+    .envelope {
+      position: relative;
+      width: 280px;
+      height: 180px;
+      background: #ff5c7a;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.5s;
+    }
+
+    .envelope::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      z-index: 2;
+      border-left: 140px solid transparent;
+      border-right: 140px solid transparent;
+      border-top: 100px solid #ff758f;
+      transform-origin: top;
+      transition: transform 0.4s 0.2s, z-index 0.2s;
+    }
+
+    .envelope::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 140px solid #ff4766;
+      border-right: 140px solid #ff4766;
+      border-bottom: 90px solid #ff3d5e;
+      border-top: 90px solid transparent;
+      border-radius: 0 0 8px 8px;
+      z-index: 3;
+    }
+
+    .letter {
+      position: absolute;
+      bottom: 10px;
+      left: 15px;
+      width: 250px;
+      height: 150px;
+      background: #fff;
+      border-radius: 4px;
+      z-index: 1;
+      transition: transform 0.5s 0.1s;
+      padding: 15px;
+      box-sizing: border-box;
+    }
+
+    /* Envelope open states */
+    .envelope.open::before {
+      transform: rotateX(180deg);
+      z-index: 0;
+    }
+
+    .envelope.open .letter {
+      transform: translateY(-80px);
+      z-index: 2;
+    }
+
+    .envelope.open {
+      animation: floatEnvelope 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatEnvelope {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-10px) rotate(1deg); }
+    }
+
+    /* Heartbeat animation for photo frame */
+    .heart-beat {
+      animation: heartbeat 2s infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1) rotate(-5deg); }
+      50% { transform: scale(1.05) rotate(-3deg); }
+    }
+
+    /* Pulsing heart icon on envelope */
+    .envelope-heart {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -30%);
+      z-index: 4;
+      font-size: 2.5rem;
+      color: #ffffff;
+      text-shadow: 0 0 15px rgba(255,255,255,0.8);
+      animation: pulse 1.2s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -30%) scale(1); }
+      50% { transform: translate(-50%, -30%) scale(1.2); }
+    }
+  </style>
+</head>
+<body class="dynamic-bg select-none">
+
+  <!-- Canvases for 60fps - 120fps effects -->
+  <!-- 1. Background meteor shower canvas -->
+  <canvas id="meteor-canvas" class="absolute inset-0 pointer-events-none z-0"></canvas>
+  <!-- 2. Touch/Mouse trail canvas -->
+  <canvas id="trail-canvas" class="absolute inset-0 pointer-events-none z-10"></canvas>
+  <!-- 3. Fireworks canvas (active on success) -->
+  <canvas id="fireworks-canvas" class="absolute inset-0 pointer-events-none z-50"></canvas>
+
+  <!-- Audio Element -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="" type="audio/mpeg">
+  </audio>
+
+  <!-- Giai đoạn 1: Mở màn bất ngờ (The Hook) -->
+  <div id="hook-view" class="absolute inset-0 flex flex-col justify-center items-center z-30 transition-opacity duration-1000 px-6">
+    <div class="text-center mb-12 max-w-md animate-pulse">
+      <h2 class="font-sans font-extrabold text-2xl md:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-sweetpink to-neoncyan tracking-wide mb-3">
+        BẠN CÓ MỘT BỨC THƯ BÍ MẬT
+      </h2>
+      <p class="font-sans text-sm md:text-base text-gray-400">
+        Hãy chạm vào trái tim để mở bức thư tình... ✨
+      </p>
+    </div>
+
+    <!-- Interactive Glowing Envelope -->
+    <div class="envelope-wrapper my-8 relative" id="envelope-trigger" style="opacity: 0;">
+      <!-- Left Carrier Bird -->
+      <div id="left-carrier" class="absolute -top-20 -left-16 flex flex-col items-center pointer-events-none select-none z-10" style="opacity: 0;">
+        <span class="text-4xl animate-wing-flap">🕊️</span>
+        <!-- Dashed string connecting dove to envelope top-left -->
+        <svg class="w-16 h-20 overflow-visible -mt-2">
+          <path d="M 12 0 Q 36 30 52 70" fill="none" stroke="#ff758f" stroke-width="2" stroke-dasharray="4,4" />
+        </svg>
+      </div>
+
+      <!-- Right Carrier Bird -->
+      <div id="right-carrier" class="absolute -top-20 -right-16 flex flex-col items-center pointer-events-none select-none z-10" style="opacity: 0;">
+        <span class="text-4xl animate-wing-flap" style="transform: scaleX(-1);">🕊️</span>
+        <!-- Dashed string connecting dove to envelope top-right -->
+        <svg class="w-16 h-20 overflow-visible -mt-2" style="transform: scaleX(-1);">
+          <path d="M 12 0 Q 36 30 52 70" fill="none" stroke="#ff758f" stroke-width="2" stroke-dasharray="4,4" />
+        </svg>
+      </div>
+
+      <div class="envelope" id="main-envelope">
+        <div class="envelope-heart">❤️</div>
+        <div class="letter shadow-inner flex flex-col justify-center items-center text-center">
+          <span class="font-handwritten text-deeppurple text-xs font-bold leading-tight" id="envelope-inside-text">
+            Gửi người quan trọng nhất...
+          </span>
+          <div class="w-12 h-0.5 bg-sweetpink my-2 opacity-50"></div>
+          <span class="font-cursive text-sweetpink text-lg font-bold">Open Me</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Giai đoạn 2: Lời tỏ tình chính thức (The Story) -->
+  <div id="story-view" class="absolute inset-0 flex flex-col items-center justify-between z-20 opacity-0 pointer-events-none transition-all duration-1000 py-8 px-6 md:py-12">
+    <!-- Heart-shaped Photo Frame -->
+    <div class="w-full flex justify-center mt-2 md:mt-4">
+      <div class="relative w-40 h-40 md:w-48 md:h-48 heart-beat">
+        <!-- SVG heart clip path frame -->
+        <div class="absolute inset-0 bg-gradient-to-tr from-sweetpink via-purple-500 to-neoncyan rounded-full p-1.5 shadow-2xl neon-glow-pink" style="clip-path: path('M12 4.419C12 4.419 10.082 0 6 0 2.686 0 0 2.686 0 6c0 6.643 9.771 12.871 12 14 2.229-1.129 12-7.357 12-14 0-3.314-2.686-6-6-6-4.082 0-6 4.419-6 4.419z'); transform: scale(6.2) translate(1.4px, 1.2px) scale(0.15);">
+          <div class="w-full h-full bg-[#160a22]" style="clip-path: path('M12 4.419C12 4.419 10.082 0 6 0 2.686 0 0 2.686 0 6c0 6.643 9.771 12.871 12 14 2.229-1.129 12-7.357 12-14 0-3.314-2.686-6-6-6-4.082 0-6 4.419-6 4.419z');">
+            <!-- Target Photo -->
+            <img id="target-photo" src="" alt="Người ấy" class="w-full h-full object-cover">
+          </div>
+        </div>
+        <!-- Little floating heart badges -->
+        <span class="absolute -top-1 -right-1 text-2xl animate-bounce" style="animation-delay: 0.5s">💖</span>
+        <span class="absolute bottom-2 -left-2 text-xl animate-bounce" style="animation-delay: 1.2s">✨</span>
+      </div>
+    </div>
+
+    <!-- Letter Glass Card & Typing Content -->
+    <div class="w-full max-w-md glass-card animated-border rounded-3xl p-6 md:p-8 flex flex-col justify-center items-center text-center relative z-20 my-4">
+      <h3 class="font-sans font-bold text-xl md:text-2xl text-sweetpink tracking-wide mb-3 neon-text-pink">
+        Gửi <span id="target-name-placeholder">...</span> ❤️
+      </h3>
+      <div class="w-20 h-0.5 bg-gradient-to-r from-sweetpink to-neoncyan mb-4"></div>
+      
+      <!-- Box with typing animation text -->
+      <div class="min-h-[120px] flex items-center justify-center">
+        <p id="confession-text-box" class="font-handwritten text-sm md:text-base leading-relaxed text-gray-200 text-left w-full"></p>
+      </div>
+    </div>
+
+    <!-- Giai đoạn 3: Lời quyết định (The Choice) -->
+    <div id="choice-container" class="w-full max-w-sm flex justify-center items-center gap-6 px-4 mb-4 relative z-30">
+      <!-- YES Button -->
+      <button id="yes-btn" class="flex-1 bg-gradient-to-r from-sweetpink to-red-500 hover:from-red-400 hover:to-sweetpink text-white font-sans font-extrabold py-3.5 px-6 rounded-full text-base md:text-lg shadow-lg transform transition-all duration-300 active:scale-95 neon-glow-pink hover:scale-105 pulse-yes">
+        ĐỒNG Ý ❤️
+      </button>
+
+      <!-- NO Button (The Runner) -->
+      <button id="no-btn" class="flex-1 bg-gray-800/80 hover:bg-gray-700/80 text-gray-400 font-sans font-semibold py-3.5 px-6 rounded-full text-base md:text-lg border border-gray-600/50 shadow-md transform transition-all duration-200 active:scale-95">
+        TỪ CHỐI 💔
+      </button>
+    </div>
+  </div>
+
+  <!-- Giai đoạn cuối: Thành công & QR Code (The Final Screen) -->
+  <div id="success-view" class="absolute inset-0 flex flex-col justify-center items-center z-40 opacity-0 pointer-events-none transition-all duration-1000 px-6 py-8 text-center bg-black/90">
+    <div class="w-full max-w-md glass-card animated-border rounded-3xl p-6 md:p-8 flex flex-col justify-center items-center shadow-2xl relative z-10">
+      
+      <!-- Sparkle Celebration Header -->
+      <h2 id="success-title" class="font-sans font-black text-3xl md:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-sweetpink via-purple-400 to-neoncyan tracking-wide mb-2 animate-bounce">
+        Anh Biết Mà! 🥰
+      </h2>
+      <p id="success-text" class="font-handwritten text-sm md:text-base text-gray-200 leading-relaxed max-w-xs mb-6">
+        Tối nay 7h anh qua đón nhé! ❤️
+      </p>
+
+      <!-- Success Cute Couples GIF -->
+      <div class="relative w-44 h-44 rounded-2xl overflow-hidden mb-6 border-2 border-sweetpink/50 shadow-lg">
+        <img id="success-gif" src="" alt="Hugging Cats" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+      </div>
+
+      <!-- Live Generated QR Code for Sharing -->
+      <div class="flex flex-col items-center p-3.5 bg-white/90 rounded-2xl shadow-inner border border-white">
+        <img id="qr-code-image" src="" alt="QR Code" class="w-32 h-32 md:w-36 md:h-36 mb-2">
+        <span class="font-sans text-[10px] text-gray-500 font-bold tracking-wider uppercase">Quét mã để chia sẻ tình yêu này ✨</span>
+      </div>
+
+      <button id="replay-btn" class="mt-6 text-xs text-sweetpink/80 hover:text-sweetpink hover:underline font-semibold flex items-center gap-1.5">
+        <span>🔄 Xem lại từ đầu</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- JavaScript Code Section -->
+  <script>
+    // ==========================================
+    // CẤU HÌNH TRANG WEB - DỄ DÀNG THAY ĐỔI
+    // ==========================================
+    const CONFIG = {
+      // 1. Tên người nhận lời tỏ tình
+      targetName: "Võ Tuấn Thơm",
+      
+      // 2. Lời nhắn hiển thị trên bức thư ban đầu (Giai đoạn 1)
+      envelopeTitle: "Gửi người quan trọng nhất...",
+      
+      // 3. Đường dẫn ảnh của người ấy ở giai đoạn 2
+      // Có thể dùng ảnh cá nhân từ Imgur, Facebook, Google Drive (lấy link trực tiếp)
+      photoUrl: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600",
+      
+      // 4. Nhạc nền lãng mạn nhẹ nhàng (Mặc định: Chopin Nocturne Op. 9 No. 2 cực kì êm dịu)
+      // Lời khuyên: Để thay bài "Tìm Em" của ca sĩ bạn thích, hãy upload lên Google Drive/Dropbox/Catbox và lấy link tải trực tiếp (.mp3) để thay vào đây
+      musicUrl: "https://archive.org/download/musopen-chopin/Nocturne%20Op.%209%20no.%202%20in%20E%20flat%20major.mp3",
+      
+      // 5. Câu tỏ tình viết tay tự động chạy (Giai đoạn 2)
+      confessionText: "Gửi anh Thơm, Cảm ơn vì đã xuất hiện trong cuộc đời em! Mỗi giây phút ở bên anh đều là những khoảnh khắc tuyệt vời nhất. Làm người yêu em nhé? ❤️",
+      
+      // 6. Tiêu đề và lời nhắn sau khi người ấy ấn "ĐỒNG Ý" (Giai đoạn 3)
+      successTitle: "Em biết ngay mà! 🥰",
+      successText: "Tối nay 7h em qua đón anh đi chơi nhé! Chuẩn bị đẹp trai nha anh yêu! ❤️",
+      
+      // 7. Ảnh động GIF hiển thị ở màn hình thành công
+      successGifUrl: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbW51cDN3ODRmdjNpaDJ2N2E1ZHBnYnh1czE1c3Awd20xZWd2ZHBndyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/iCVz2SSs809YLnEnf7/giphy.gif"
+    };
+
+    // ==========================================
+    // KHỞI TẠO TÀI NGUYÊN
+    // ==========================================
+    document.getElementById('target-name-placeholder').textContent = CONFIG.targetName;
+    document.getElementById('envelope-inside-text').textContent = CONFIG.envelopeTitle;
+    document.getElementById('target-photo').src = CONFIG.photoUrl;
+    document.getElementById('success-title').textContent = CONFIG.successTitle;
+    document.getElementById('success-text').textContent = CONFIG.successText;
+    document.getElementById('success-gif').src = CONFIG.successGifUrl;
+    
+    // Tự động thiết lập mã QR chứa đường dẫn trang hiện tại
+    const currentUrl = window.location.href;
+    document.getElementById('qr-code-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(currentUrl)}`;
+
+    const bgMusic = document.getElementById('bg-music');
+    bgMusic.src = CONFIG.musicUrl;
+    bgMusic.volume = 0.65;
+
+    // ==========================================
+    // CANVAS 1: SAO BĂNG & SAO ĐÊM (Background)
+    // ==========================================
+    const meteorCanvas = document.getElementById('meteor-canvas');
+    const mCtx = meteorCanvas.getContext('2d');
+    let screenWidth = window.innerWidth;
+    let screenHeight = window.innerHeight;
+
+    meteorCanvas.width = screenWidth;
+    meteorCanvas.height = screenHeight;
+
+    window.addEventListener('resize', () => {
+      screenWidth = window.innerWidth;
+      screenHeight = window.innerHeight;
+      meteorCanvas.width = screenWidth;
+      meteorCanvas.height = screenHeight;
+      trailCanvas.width = screenWidth;
+      trailCanvas.height = screenHeight;
+      fireworksCanvas.width = screenWidth;
+      fireworksCanvas.height = screenHeight;
+    });
+
+    // Tạo các ngôi sao nhỏ lấp lánh ở nền
+    const staticStars = [];
+    const numStaticStars = Math.min(120, Math.floor((screenWidth * screenHeight) / 8000));
+    for (let i = 0; i < numStaticStars; i++) {
+      staticStars.push({
+        x: Math.random() * screenWidth,
+        y: Math.random() * screenHeight,
+        size: Math.random() * 1.5,
+        alpha: Math.random(),
+        blinkSpeed: 0.01 + Math.random() * 0.02
+      });
+    }
+
+    let isEnvelopeOpened = false;
+
+    // Class Trái tim bay lên (Floating Heart)
+    class FloatingHeart {
+      constructor() {
+        this.reset();
+        this.y = Math.random() * screenHeight; // Khởi tạo ngẫu nhiên vị trí ban đầu
+      }
+
+      reset() {
+        this.x = Math.random() * screenWidth;
+        this.y = screenHeight + 20;
+        this.size = 8 + Math.random() * 10;
+        this.speedY = 0.4 + Math.random() * 0.8;
+        this.wobble = Math.random() * Math.PI * 2;
+        this.wobbleSpeed = 0.01 + Math.random() * 0.02;
+        this.opacity = 0.1 + Math.random() * 0.35;
+      }
+
+      update() {
+        this.y -= this.speedY;
+        this.wobble += this.wobbleSpeed;
+        this.x += Math.sin(this.wobble) * 0.3;
+        if (this.y < -20) {
+          this.reset();
+        }
+      }
+
+      draw() {
+        mCtx.save();
+        mCtx.fillStyle = `rgba(255, 117, 143, ${this.opacity})`;
+        mCtx.beginPath();
+        const topCurveHeight = this.size * 0.3;
+        mCtx.moveTo(this.x, this.y + topCurveHeight);
+        mCtx.bezierCurveTo(
+          this.x - this.size / 2, this.y - this.size / 2,
+          this.x - this.size, this.y + this.size / 3,
+          this.x, this.y + this.size
+        );
+        mCtx.bezierCurveTo(
+          this.x + this.size, this.y + this.size / 3,
+          this.x + this.size / 2, this.y - this.size / 2,
+          this.x, this.y + topCurveHeight
+        );
+        mCtx.fill();
+        mCtx.restore();
+      }
+    }
+
+    const floatingHearts = [];
+    const numFloatingHearts = 35; // Số lượng trái tim bay ở nền
+    for (let i = 0; i < numFloatingHearts; i++) {
+      floatingHearts.push(new FloatingHeart());
+    }
+
+    // Class Sao băng (Meteor)
+    class Meteor {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * screenWidth * 1.5;
+        this.y = -Math.random() * 100;
+        this.length = 80 + Math.random() * 120;
+        this.speed = 12 + Math.random() * 15;
+        this.angle = 210 + Math.random() * 10; // Bay từ trên bên phải xuống dưới bên trái
+        this.opacity = 0;
+        this.maxOpacity = 0.4 + Math.random() * 0.5;
+        this.fadeSpeed = 0.02;
+        this.active = true;
+        this.width = 1.2 + Math.random() * 1.5;
+      }
+
+      update() {
+        const angleRad = (this.angle * Math.PI) / 180;
+        this.x += Math.cos(angleRad) * this.speed;
+        this.y -= Math.sin(angleRad) * this.speed; // Trừ vì hệ trục canvas y đi xuống
+
+        if (this.opacity < this.maxOpacity && this.x > 0 && this.y < screenHeight) {
+          this.opacity += this.fadeSpeed;
+        }
+
+        // Kiểm tra xem đã bay ra ngoài màn hình chưa
+        if (this.x < -100 || this.y > screenHeight + 100) {
+          this.reset();
+        }
+      }
+
+      draw() {
+        const angleRad = (this.angle * Math.PI) / 180;
+        const tailX = this.x - Math.cos(angleRad) * this.length;
+        const tailY = this.y + Math.sin(angleRad) * this.length;
+
+        mCtx.save();
+        const gradient = mCtx.createLinearGradient(this.x, this.y, tailX, tailY);
+        gradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity})`);
+        gradient.addColorStop(0.3, `rgba(255, 117, 143, ${this.opacity * 0.6})`);
+        gradient.addColorStop(0.6, `rgba(6, 182, 212, ${this.opacity * 0.3})`);
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+        mCtx.strokeStyle = gradient;
+        mCtx.lineWidth = this.width;
+        mCtx.lineCap = 'round';
+        mCtx.beginPath();
+        mCtx.moveTo(this.x, this.y);
+        mCtx.lineTo(tailX, tailY);
+        mCtx.stroke();
+        mCtx.restore();
+      }
+    }
+
+    // Class Đom đóm bay tự do (Firefly)
+    class Firefly {
+      constructor() {
+        this.reset();
+        // Cho đom đóm xuất hiện ngẫu nhiên ban đầu khắp màn hình
+        this.x = Math.random() * screenWidth;
+        this.y = Math.random() * screenHeight;
+      }
+
+      reset() {
+        this.x = Math.random() * screenWidth;
+        this.y = screenHeight + 10;
+        this.size = 1.2 + Math.random() * 1.8;
+        this.speedX = (Math.random() - 0.5) * 0.8;
+        this.speedY = -(0.3 + Math.random() * 0.6); // Bay chậm lên trên
+        this.angle = Math.random() * Math.PI * 2;
+        this.angleSpeed = 0.01 + Math.random() * 0.02;
+        this.opacity = 0.2 + Math.random() * 0.8;
+        this.blinkSpeed = 0.008 + Math.random() * 0.015;
+        this.glow = 3 + Math.random() * 5;
+      }
+
+      update() {
+        this.angle += this.angleSpeed;
+        this.x += this.speedX + Math.sin(this.angle) * 0.3;
+        this.y += this.speedY;
+
+        // Lấp lánh bập bùng
+        this.opacity += this.blinkSpeed;
+        if (this.opacity > 1 || this.opacity < 0.1) {
+          this.blinkSpeed = -this.blinkSpeed;
+        }
+
+        // Tái tạo khi bay ra ngoài
+        if (this.x < -10 || this.x > screenWidth + 10 || this.y < -10) {
+          this.reset();
+        }
+      }
+
+      draw() {
+        mCtx.save();
+        mCtx.fillStyle = `rgba(234, 255, 140, ${Math.abs(this.opacity)})`; // Màu đom đóm vàng chanh neon
+        mCtx.shadowBlur = this.glow;
+        mCtx.shadowColor = 'rgba(234, 255, 140, 0.8)';
+        mCtx.beginPath();
+        mCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        mCtx.fill();
+        mCtx.restore();
+      }
+    }
+
+    const fireflies = [];
+    const numFireflies = 45; // Số lượng đom đóm bay khắp màn hình
+    for (let i = 0; i < numFireflies; i++) {
+      fireflies.push(new Firefly());
+    }
+
+    const meteors = [];
+    const numMeteors = 15; // Số sao băng hiển thị cùng lúc
+    for (let i = 0; i < numMeteors; i++) {
+      // Để các sao băng xuất hiện lệch thời gian nhau
+      setTimeout(() => {
+        meteors.push(new Meteor());
+      }, i * 800);
+    }
+
+    // Vòng lặp vẽ hình sao băng nền
+    function animateBackground() {
+      mCtx.fillStyle = 'rgba(11, 12, 16, 0.2)'; // Xóa màn hình tạo vệt
+      mCtx.fillRect(0, 0, screenWidth, screenHeight);
+
+      // Vẽ sao đêm lấp lánh
+      staticStars.forEach(star => {
+        star.alpha += star.blinkSpeed;
+        if (star.alpha > 1 || star.alpha < 0.1) {
+          star.blinkSpeed = -star.blinkSpeed;
+        }
+        mCtx.fillStyle = `rgba(255, 255, 255, ${Math.abs(star.alpha)})`;
+        mCtx.beginPath();
+        mCtx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        mCtx.fill();
+      });
+
+      // Vẽ và cập nhật sao băng
+      meteors.forEach(meteor => {
+        meteor.update();
+        meteor.draw();
+      });
+
+      // Vẽ và cập nhật đom đóm bay khắp bản đồ
+      fireflies.forEach(firefly => {
+        firefly.update();
+        firefly.draw();
+      });
+
+      // Vẽ và cập nhật trái tim bay (chỉ khi thư đã mở)
+      if (isEnvelopeOpened) {
+        floatingHearts.forEach(heart => {
+          heart.update();
+          heart.draw();
+        });
+      }
+
+      requestAnimationFrame(animateBackground);
+    }
+    animateBackground();
+
+
+    // ==========================================
+    // CANVAS 2: HIỆU ỨNG TƯƠNG TÁC CHẠM (Touch Trail)
+    // ==========================================
+    const trailCanvas = document.getElementById('trail-canvas');
+    const tCtx = trailCanvas.getContext('2d');
+    trailCanvas.width = screenWidth;
+    trailCanvas.height = screenHeight;
+
+    const trailParticles = [];
+
+    class TrailParticle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = 6 + Math.random() * 8;
+        this.speedX = (Math.random() - 0.5) * 4;
+        this.speedY = (Math.random() - 0.5) * 4 - 1; // Bay nhẹ lên trên
+        this.life = 1;
+        this.decay = 0.015 + Math.random() * 0.02;
+        
+        // Màu sắc rực rỡ neon ngẫu nhiên
+        const colors = [
+          'rgba(255, 117, 143, ', // hồng ngọt ngào
+          'rgba(6, 182, 212, ',  // xanh neon
+          'rgba(192, 132, 252, ', // tím nhạt
+          'rgba(244, 63, 94, '   // đỏ hoa hồng
+        ];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.type = Math.random() > 0.5 ? 'star' : 'heart';
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.life -= this.decay;
+        if (this.size > 0.5) this.size -= 0.1;
+      }
+
+      draw() {
+        tCtx.save();
+        tCtx.fillStyle = this.color + this.life + ')';
+        tCtx.shadowBlur = 10;
+        tCtx.shadowColor = this.color.replace('rgba', 'rgb').split(',').slice(0, 3).join(',') + ')';
+
+        if (this.type === 'heart') {
+          // Vẽ hình trái tim nhỏ từ đầu ngón tay
+          tCtx.beginPath();
+          const topCurveHeight = this.size * 0.3;
+          tCtx.moveTo(this.x, this.y + topCurveHeight);
+          // Nửa bên trái
+          tCtx.bezierCurveTo(
+            this.x - this.size / 2, this.y - this.size / 2,
+            this.x - this.size, this.y + this.size / 3,
+            this.x, this.y + this.size
+          );
+          // Nửa bên phải
+          tCtx.bezierCurveTo(
+            this.x + this.size, this.y + this.size / 3,
+            this.x + this.size / 2, this.y - this.size / 2,
+            this.x, this.y + topCurveHeight
+          );
+          tCtx.fill();
+        } else {
+          // Vẽ ngôi sao 4 cánh lấp lánh
+          tCtx.beginPath();
+          tCtx.moveTo(this.x, this.y - this.size);
+          tCtx.lineTo(this.x + this.size * 0.3, this.y - this.size * 0.3);
+          tCtx.lineTo(this.x + this.size, this.y);
+          tCtx.lineTo(this.x + this.size * 0.3, this.y + this.size * 0.3);
+          tCtx.lineTo(this.x, this.y + this.size);
+          tCtx.lineTo(this.x - this.size * 0.3, this.y + this.size * 0.3);
+          tCtx.lineTo(this.x - this.size, this.y);
+          tCtx.lineTo(this.x - this.size * 0.3, this.y - this.size * 0.3);
+          tCtx.closePath();
+          tCtx.fill();
+        }
+        tCtx.restore();
+      }
+    }
+
+    function addTrail(clientX, clientY) {
+      // Spawn nhiều hạt một lúc để hiệu ứng dày và đẹp hơn
+      const count = 3;
+      for (let i = 0; i < count; i++) {
+        trailParticles.push(new TrailParticle(clientX, clientY));
+      }
+    }
+
+    // Lắng nghe chuột trên máy tính
+    window.addEventListener('mousemove', (e) => {
+      addTrail(e.clientX, e.clientY);
+    });
+
+    // Lắng nghe chạm vuốt trên di động
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        addTrail(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 0) {
+        addTrail(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    // Vòng lặp vẽ touch trail
+    function animateTrail() {
+      tCtx.clearRect(0, 0, screenWidth, screenHeight);
+
+      for (let i = trailParticles.length - 1; i >= 0; i--) {
+        const p = trailParticles[i];
+        p.update();
+        if (p.life <= 0) {
+          trailParticles.splice(i, 1);
+        } else {
+          p.draw();
+        }
+      }
+      requestAnimationFrame(animateTrail);
+    }
+    animateTrail();
+
+
+    // ==========================================
+    // CANVAS 3: PHÁO HOA TRÁI TIM (Khi Đồng Ý)
+    // ==========================================
+    const fireworksCanvas = document.getElementById('fireworks-canvas');
+    const fCtx = fireworksCanvas.getContext('2d');
+    fireworksCanvas.width = screenWidth;
+    fireworksCanvas.height = screenHeight;
+
+    const fireworks = [];
+    const fParticles = [];
+
+    // Lớp pháo bay lên
+    class Firework {
+      constructor() {
+        this.x = Math.random() * screenWidth;
+        this.y = screenHeight;
+        this.targetY = screenHeight * 0.2 + Math.random() * (screenHeight * 0.4);
+        this.speed = 8 + Math.random() * 6;
+        this.angle = Math.PI / 2 + (Math.random() - 0.5) * 0.15; // Hướng chéo thẳng đứng
+        this.vx = Math.cos(this.angle) * -this.speed;
+        this.vy = Math.sin(this.angle) * -this.speed;
+        this.size = 3;
+        this.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+        this.alive = true;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        
+        // Thêm trọng lực nhẹ
+        this.vy += 0.05;
+
+        // Nếu đạt tới độ cao mục tiêu hoặc bắt đầu rơi xuống
+        if (this.vy >= 0 || this.y <= this.targetY) {
+          this.alive = false;
+          this.explode();
+        }
+      }
+
+      draw() {
+        fCtx.save();
+        fCtx.fillStyle = this.color;
+        fCtx.shadowBlur = 10;
+        fCtx.shadowColor = this.color;
+        fCtx.beginPath();
+        fCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        fCtx.fill();
+        fCtx.restore();
+      }
+
+      explode() {
+        // Tạo pháo hoa dạng TRÁI TIM
+        const particleCount = 100;
+        // Góc chuyển động
+        for (let i = 0; i < particleCount; i++) {
+          const t = (i / particleCount) * Math.PI * 2;
+          
+          // Công thức toán học tính tọa độ hình trái tim
+          const heartX = 16 * Math.pow(Math.sin(t), 3);
+          const heartY = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+          
+          // Phân tán vector vận tốc theo hình trái tim
+          const factor = 0.2 + Math.random() * 0.2;
+          const vx = heartX * factor;
+          const vy = heartY * factor;
+
+          fParticles.push(new FireworkParticle(this.x, this.y, vx, vy, this.color));
+        }
+      }
+    }
+
+    // Các mảnh vụn pháo hoa
+    class FireworkParticle {
+      constructor(x, y, vx, vy, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.color = color;
+        this.life = 1.0;
+        this.decay = 0.01 + Math.random() * 0.015;
+        this.gravity = 0.06;
+        this.friction = 0.98;
+        this.size = 2 + Math.random() * 2.5;
+      }
+
+      update() {
+        this.vx *= this.friction;
+        this.vy *= this.friction;
+        this.vy += this.gravity;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= this.decay;
+      }
+
+      draw() {
+        fCtx.save();
+        fCtx.fillStyle = this.color;
+        fCtx.globalAlpha = this.life;
+        fCtx.shadowBlur = 6;
+        fCtx.shadowColor = this.color;
+        fCtx.beginPath();
+        fCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        fCtx.fill();
+        fCtx.restore();
+      }
+    }
+
+    let isSuccessState = false;
+
+    // Vòng lặp vẽ pháo hoa trái tim
+    function animateFireworks() {
+      fCtx.clearRect(0, 0, screenWidth, screenHeight);
+
+      if (isSuccessState && Math.random() < 0.04) {
+        fireworks.push(new Firework());
+      }
+
+      // Cập nhật pháo bay lên
+      for (let i = fireworks.length - 1; i >= 0; i--) {
+        const fw = fireworks[i];
+        fw.update();
+        if (!fw.alive) {
+          fireworks.splice(i, 1);
+        } else {
+          fw.draw();
+        }
+      }
+
+      // Cập nhật mảnh nổ
+      for (let i = fParticles.length - 1; i >= 0; i--) {
+        const p = fParticles[i];
+        p.update();
+        if (p.life <= 0) {
+          fParticles.splice(i, 1);
+        } else {
+          p.draw();
+        }
+      }
+
+      requestAnimationFrame(animateFireworks);
+    }
+    animateFireworks();
+
+
+    // Hàm chim mang thư bay vào giữa màn hình
+    function playCarrierIntro() {
+      // 1. Reset các hoạt ảnh bồng bềnh và tọa độ hiện tại
+      gsap.killTweensOf([envelopeTrigger, "#left-carrier", "#right-carrier"]);
+      
+      // 2. Đặt trạng thái ban đầu ngoài màn hình
+      gsap.set(envelopeTrigger, { y: 350, scale: 0.2, opacity: 0, rotation: 0 });
+      gsap.set("#left-carrier", { x: -160, y: 0, opacity: 0, scale: 1 });
+      gsap.set("#right-carrier", { x: 160, y: 0, opacity: 0, scale: 1 });
+
+      // 3. Cho chim mang thư bay vào giữa
+      const tl = gsap.timeline();
+      tl.to(envelopeTrigger, {
+        y: 0,
+        scale: 1,
+        opacity: 1,
+        duration: 2.0,
+        ease: "power2.out"
+      });
+      
+      tl.to(["#left-carrier", "#right-carrier"], {
+        x: 0,
+        opacity: 1,
+        duration: 1.6,
+        ease: "back.out(1.2)"
+      }, "-=1.6");
+
+      // 4. Cho chim và thư bay bồng bềnh tự do
+      tl.add(() => {
+        gsap.to(envelopeTrigger, {
+          y: -8,
+          rotation: 0.5,
+          duration: 1.8,
+          yoyo: true,
+          repeat: -1,
+          ease: "sine.inOut"
+        });
+        gsap.to("#left-carrier", {
+          y: -5,
+          x: -2,
+          duration: 1.4,
+          yoyo: true,
+          repeat: -1,
+          ease: "sine.inOut"
+        });
+        gsap.to("#right-carrier", {
+          y: -5,
+          x: 2,
+          duration: 1.6,
+          yoyo: true,
+          repeat: -1,
+          ease: "sine.inOut"
+        });
+      });
+    }
+
+    // ==========================================
+    // LOGIC CHUYỂN CẢNH & TƯƠNG TÁC
+    // ==========================================
+    const hookView = document.getElementById('hook-view');
+    const storyView = document.getElementById('story-view');
+    const successView = document.getElementById('success-view');
+    const mainEnvelope = document.getElementById('main-envelope');
+    const envelopeTrigger = document.getElementById('envelope-trigger');
+    const yesBtn = document.getElementById('yes-btn');
+    const noBtn = document.getElementById('no-btn');
+    const replayBtn = document.getElementById('replay-btn');
+    const textContainer = document.getElementById('confession-text-box');
+
+    // Nổ hoa giấy trái tim khi mở thư (Confetti Effect)
+    function spawnConfetti(x, y) {
+      for (let i = 0; i < 40; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 3 + Math.random() * 7;
+        const vx = Math.cos(angle) * speed;
+        const vy = Math.sin(angle) * speed - 3;
+        const color = `hsl(${340 + Math.random() * 30}, 100%, 70%)`; // Hông và đỏ
+        fParticles.push(new FireworkParticle(x, y, vx, vy, color));
+      }
+    }
+
+    // GIAI ĐOẠN 1 -> GIAI ĐOẠN 2: MỞ THƯ
+    envelopeTrigger.addEventListener('click', () => {
+      // Kích hoạt hiệu ứng trái tim bay lên nền
+      isEnvelopeOpened = true;
+      
+      // Cho chim bay đi mất và dừng bồng bềnh
+      gsap.killTweensOf([envelopeTrigger, "#left-carrier", "#right-carrier"]);
+      gsap.to(envelopeTrigger, { rotation: 0, y: 0, duration: 0.4 });
+      gsap.to("#left-carrier", { x: -300, y: -250, opacity: 0, scale: 0.5, duration: 1.2, ease: "power2.in" });
+      gsap.to("#right-carrier", { x: 300, y: -250, opacity: 0, scale: 0.5, duration: 1.2, ease: "power2.in" });
+
+      // Mở hộp thư
+      mainEnvelope.classList.add('open');
+      
+      // Phát nhạc nền
+      bgMusic.play().catch(err => {
+        console.log("Autoplay bị chặn hoặc nhạc chưa load xong: ", err);
+      });
+
+      // Tạo nổ trái tim giấy ngay tại phong bì
+      const rect = mainEnvelope.getBoundingClientRect();
+      const envelopeCenterX = rect.left + rect.width / 2;
+      const envelopeCenterY = rect.top + rect.height / 2;
+      spawnConfetti(envelopeCenterX, envelopeCenterY);
+
+      // Animation chuyển tiếp bằng GSAP
+      gsap.timeline()
+        .to(hookView, {
+          opacity: 0,
+          scale: 0.85,
+          duration: 0.8,
+          onComplete: () => {
+            hookView.classList.add('hidden');
+            storyView.classList.remove('hidden');
+            storyView.style.pointerEvents = 'auto';
+            document.body.classList.remove('dynamic-bg');
+            document.body.classList.add('story-bg');
+          }
+        })
+        .to(storyView, {
+          opacity: 1,
+          duration: 1,
+          delay: 0.2,
+          onComplete: () => {
+            // Chạy hiệu ứng gõ chữ
+            startTypingEffect(CONFIG.confessionText);
+          }
+        });
+    });
+
+    // HIỆU ỨNG GÕ CHỮ (Typing Effect)
+    let typingTimer;
+    function startTypingEffect(text) {
+      textContainer.innerHTML = "";
+      let index = 0;
+      clearInterval(typingTimer);
+      
+      typingTimer = setInterval(() => {
+        if (index < text.length) {
+          const char = text.charAt(index);
+          textContainer.innerHTML += char;
+          index++;
+          
+          // Cuộn nhẹ xuống dưới nếu chữ quá dài trên màn hình nhỏ
+          textContainer.scrollTop = textContainer.scrollHeight;
+        } else {
+          clearInterval(typingTimer);
+        }
+      }, 50); // Tốc độ gõ 50ms mỗi ký tự
+    }
+
+    // LOGIC NÚT "TỪ CHỐI" (Tự né tránh ngẫu nhiên & thu nhỏ)
+    let noAttempts = 0;
+    let yesScale = 1;
+    let noScale = 1;
+
+    function escapeNoButton() {
+      noAttempts++;
+
+      // 1. Phóng to nút Đồng Ý, Thu nhỏ nút Từ Chối
+      yesScale += 0.25;
+      noScale -= 0.15;
+
+      gsap.to(yesBtn, {
+        scale: yesScale,
+        duration: 0.3,
+        ease: "back.out(1.7)"
+      });
+
+      if (noScale <= 0.2) {
+        // Biến mất hoàn toàn nút từ chối nếu bị né quá nhiều lần
+        gsap.to(noBtn, {
+          scale: 0,
+          opacity: 0,
+          duration: 0.3,
+          onComplete: () => {
+            noBtn.style.display = 'none';
+          }
+        });
+        return;
+      } else {
+        gsap.to(noBtn, {
+          scale: noScale,
+          duration: 0.2
+        });
+      }
+
+      // 2. Tính toán vị trí chạy trốn mới
+      // Nút chỉ di chuyển xung quanh khu vực màn hình an toàn để tránh bị lòi ra ngoài
+      const padding = 60;
+      const safeWidth = screenWidth - padding * 2;
+      const safeHeight = screenHeight - padding * 2;
+
+      // Vị trí ngẫu nhiên mới
+      const newX = padding + Math.random() * safeWidth - (noBtn.offsetWidth / 2);
+      const newY = padding + Math.random() * safeHeight - (noBtn.offsetHeight / 2);
+
+      // Chuyển nút Từ Chối thành absolute để di chuyển tự do khắp màn hình
+      noBtn.style.position = 'fixed';
+      noBtn.style.zIndex = '100';
+
+      // Tạo chuyển động mượt mà tới điểm ngẫu nhiên bằng GSAP
+      gsap.to(noBtn, {
+        left: newX + 'px',
+        top: newY + 'px',
+        duration: 0.35,
+        ease: "power2.out"
+      });
+    }
+
+    // Lắng nghe sự kiện hover (máy tính) và touchstart (điện thoại) của nút TỪ CHỐI
+    noBtn.addEventListener('mouseenter', escapeNoButton);
+    noBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault(); // Ngăn hành vi chạm kích hoạt click
+      escapeNoButton();
+    });
+    
+    // Nếu chạm/bấm trúng nút Từ Chối (đôi khi xảy ra do lag), chạy trốn luôn
+    noBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      escapeNoButton();
+    });
+
+    // GIAI ĐOẠN 2 -> GIAI ĐOẠN 3: ẤN ĐỒNG Ý
+    yesBtn.addEventListener('click', () => {
+      isSuccessState = true;
+      
+      // Bắn pháo hoa ngay lập tức tại tâm nút bấm
+      const rect = yesBtn.getBoundingClientRect();
+      const yesCenterX = rect.left + rect.width / 2;
+      const yesCenterY = rect.top + rect.height / 2;
+      
+      for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+          const fw = new Firework();
+          fw.x = yesCenterX + (Math.random() - 0.5) * 50;
+          fw.y = yesCenterY;
+          fw.targetY = screenHeight * 0.2 + Math.random() * (screenHeight * 0.3);
+          fireworks.push(fw);
+        }, i * 200);
+      }
+
+      // Chuyển cảnh sang Màn hình Thành công bằng GSAP
+      gsap.timeline()
+        .to(storyView, {
+          opacity: 0,
+          scale: 0.9,
+          duration: 0.6,
+          onComplete: () => {
+            storyView.classList.add('hidden');
+            successView.classList.remove('hidden');
+            successView.style.pointerEvents = 'auto';
+          }
+        })
+        .to(successView, {
+          opacity: 1,
+          duration: 0.8,
+          onComplete: () => {
+            // Liên tục bắn pháo hoa trong 6 giây
+            let interval = setInterval(() => {
+              if (isSuccessState) {
+                fireworks.push(new Firework());
+              } else {
+                clearInterval(interval);
+              }
+            }, 600);
+
+            // Dừng bắn tự động dồn dập sau 8 giây để đỡ lag
+            setTimeout(() => {
+              clearInterval(interval);
+            }, 8000);
+          }
+        });
+    });
+
+    // CHỨC NĂNG XEM LẠI TỪ ĐẦU (Reset)
+    replayBtn.addEventListener('click', () => {
+      isSuccessState = false;
+      isEnvelopeOpened = false; // Đặt lại hiệu ứng trái tim bay lên nền
+      noAttempts = 0;
+      yesScale = 1;
+      noScale = 1;
+
+      // Đặt lại style nút từ chối
+      noBtn.style.display = 'block';
+      noBtn.style.position = 'static';
+      noBtn.style.transform = 'scale(1)';
+      noBtn.style.left = 'auto';
+      noBtn.style.top = 'auto';
+      
+      gsap.set(yesBtn, { scale: 1 });
+      gsap.set(noBtn, { scale: 1, opacity: 1 });
+
+      // Chuyển cảnh về Hook
+      gsap.timeline()
+        .to(successView, {
+          opacity: 0,
+          duration: 0.6,
+          onComplete: () => {
+            successView.classList.add('hidden');
+            mainEnvelope.classList.remove('open');
+            hookView.classList.remove('hidden');
+            
+            // Dừng nhạc
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+            
+            document.body.classList.remove('story-bg');
+            document.body.classList.add('dynamic-bg');
+          }
+        })
+        .to(hookView, {
+          opacity: 1,
+          scale: 1,
+          duration: 0.6,
+          onComplete: () => {
+            playCarrierIntro();
+          }
+        });
+    });
+
+    // Tải xong trang web thì chạy hoạt ảnh chim mang thư tới
+    window.addEventListener('load', () => {
+      // Nhỏ volume nhạc và nạp link
+      bgMusic.volume = 0.5;
+      playCarrierIntro();
+    });
+  </script>
+</body>
+</html>
