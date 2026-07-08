@@ -618,9 +618,7 @@
     document.getElementById('envelope-inside-text').textContent = CONFIG.envelopeTitle;
     document.getElementById('target-photo').src = CONFIG.photoUrl;
 
-    // Tự động thiết lập mã QR trỏ đến trang hiện tại
-    const currentUrl = window.location.href;
-    document.getElementById('qr-code-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(currentUrl)}`;
+    // (QR code đã được thay thế bằng finale animation)
 
     const bgMusic = document.getElementById('bg-music');
     bgMusic.src = CONFIG.musicUrl;
