@@ -142,6 +142,57 @@
       100% { transform: translateX(-50%); }
     }
 
+    /* Finale: Sakura petal rain */
+    @keyframes petalFall {
+      0%   { transform: translateY(-60px) rotate(0deg) translateX(0); opacity: 0; }
+      10%  { opacity: 1; }
+      80%  { opacity: 0.85; }
+      100% { transform: translateY(110vh) rotate(720deg) translateX(40px); opacity: 0; }
+    }
+    .sakura-petal {
+      position: fixed;
+      top: -60px;
+      pointer-events: none;
+      z-index: 60;
+      font-size: 1.1rem;
+      animation: petalFall linear infinite;
+    }
+
+    /* Finale: glowing love message */
+    @keyframes loveTextReveal {
+      0%   { opacity: 0; letter-spacing: 0.35em; filter: blur(18px); }
+      60%  { opacity: 1; letter-spacing: 0.12em; filter: blur(1px); }
+      100% { opacity: 1; letter-spacing: 0.12em; filter: blur(0); }
+    }
+    @keyframes loveTextFloat {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+    @keyframes shimmerText {
+      0%   { background-position: 200% center; }
+      100% { background-position: -200% center; }
+    }
+    .finale-love-text {
+      background: linear-gradient(90deg,
+        #ff758f 0%, #ffcdd2 20%,
+        #fff 40%, #c084fc 60%,
+        #ffcdd2 80%, #ff758f 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmerText 3s linear infinite, loveTextFloat 3.5s ease-in-out infinite;
+      filter: drop-shadow(0 0 18px rgba(255,117,143,0.7));
+    }
+    @keyframes heartFireworkBurst {
+      0%   { transform: scale(0.1) rotate(-20deg); opacity: 1; }
+      70%  { transform: scale(1.3) rotate(15deg); opacity: 0.9; }
+      100% { transform: scale(1.8) rotate(0deg); opacity: 0; }
+    }
+    .finale-sub-text {
+      animation: loveTextFloat 4s ease-in-out infinite;
+    }
+
     /* Dynamic gradient backgrounds */
     .dynamic-bg {
       background: linear-gradient(135deg, #090a0f, #1b0f24, #2a0827, #071720);
@@ -459,23 +510,19 @@
       </div>
     </div>
 
-    <!-- Heart-shaped QR Code Container -->
-    <div id="heart-qr-container" class="absolute bottom-20 flex flex-col items-center pointer-events-auto opacity-0 transition-opacity duration-1000 z-30">
-      <div class="relative w-36 h-36 flex items-center justify-center">
-        <!-- Glowing heart background/border -->
-        <svg class="absolute inset-0 w-full h-full fill-[#ff758f]/10 stroke-[#ff758f] stroke-[2.5] drop-shadow-[0_0_15px_rgba(255,117,143,0.7)] animate-pulse" viewBox="0 0 100 100">
-          <path d="M 50 15 C 35 -5, 5 5, 5 40 C 5 70, 50 95, 50 95 C 50 95, 95 70, 95 40 C 95 5, 65 -5, 50 15 Z" stroke-dasharray="200" stroke-dashoffset="0" />
-        </svg>
-        <!-- The QR code inside -->
-        <div class="relative w-22 h-22 bg-white p-1 rounded-lg z-10 shadow-lg">
-          <img id="qr-code-image" src="" alt="QR" class="w-full h-full">
-          <!-- Small center heart logo (100% scannable) -->
-          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span class="text-xs">❤️</span>
-          </div>
-        </div>
-      </div>
-      <span class="font-sans text-[9px] text-sweetpink/90 font-bold tracking-wider mt-2.5 bg-black/45 px-3 py-1 rounded-full border border-sweetpink/20">QUÉT MÃ ĐỂ CHIA SẺ TÌNH YÊU NÀY ✨</span>
+    <!-- Finale: Heart Fireworks Canvas -->
+    <canvas id="finale-fireworks-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-20 opacity-0 transition-opacity duration-1000"></canvas>
+
+    <!-- Finale: Glowing Love Message Overlay -->
+    <div id="finale-love-overlay" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-25 opacity-0 transition-opacity duration-[2000ms] px-6">
+      <!-- Big glowing heart icon burst -->
+      <div id="finale-heart-burst" class="text-7xl mb-5 opacity-0 transition-all duration-700" style="filter: drop-shadow(0 0 30px rgba(255,117,143,0.9));">💖</div>
+      <!-- Main message -->
+      <h1 class="finale-love-text text-3xl md:text-4xl font-black text-center leading-tight mb-3" style="font-family: 'Outfit', sans-serif; opacity: 0; transition: opacity 1.5s 0.5s;" id="finale-main-text">Mãi mãi bên nhau</h1>
+      <!-- Sub message -->
+      <p class="finale-sub-text text-center text-sweetpink/90 font-semibold text-sm md:text-base mt-2 tracking-widest" style="opacity:0; transition: opacity 1.5s 1.2s; text-shadow: 0 0 12px rgba(255,117,143,0.8);" id="finale-sub-text">Dù trời đất có đổi thay, anh vẫn chọn em 🌙</p>
+      <!-- Floating hearts row -->
+      <div id="finale-hearts-row" class="flex gap-3 mt-6 text-2xl opacity-0 transition-opacity duration-[2000ms]" style="transition-delay: 2s;">💗 💜 💗 💜 💗</div>
     </div>
 
     <!-- Replay button absolute at bottom -->
@@ -1187,18 +1234,177 @@
           if (chibiHeart) chibiHeart.classList.remove('opacity-0');
         }
 
-        // Frame 960: Hiển thị mã QR trái tim
+        // Frame 960: SPECTACULAR FINALE — Heart Fireworks + Sakura + Love Message
         if (successFrameCount === 960) {
-          const heartQr = document.getElementById('heart-qr-container');
-          if (heartQr) {
-            heartQr.style.opacity = '1';
-          }
+          launchFinaleSequence();
         }
       }
 
       requestAnimationFrame(animateFireworks);
     }
     animateFireworks();
+
+    // ==========================================
+    // FINALE: Heart Fireworks + Sakura + Love Message
+    // ==========================================
+    const finaleCanvas = document.getElementById('finale-fireworks-canvas');
+    const finCtx = finaleCanvas.getContext('2d');
+    finaleCanvas.width = screenWidth;
+    finaleCanvas.height = screenHeight;
+
+    const finaleParticles = [];
+    let finaleRunning = false;
+
+    class HeartFireworkParticle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2.0 + Math.random() * 5.5;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        this.size = 1.2 + Math.random() * 3.2;
+        this.life = 1.0;
+        this.decay = 0.012 + Math.random() * 0.018;
+        this.gravity = 0.08;
+        const palette = [
+          'rgba(255,117,143,', 'rgba(255,182,210,', 'rgba(192,132,252,',
+          'rgba(253,224,71,',  'rgba(6,182,212,',  'rgba(255,255,255,'
+        ];
+        this.color = palette[Math.floor(Math.random() * palette.length)];
+        // Some particles are heart-shaped (emoji)
+        this.isHeart = Math.random() < 0.12;
+        this.heartEmoji = ['❤️','💗','💜','💛','✨','🌸'][Math.floor(Math.random() * 6)];
+        this.emoji_scale = 0.6 + Math.random() * 0.8;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += this.gravity;
+        this.vx *= 0.97;
+        this.life -= this.decay;
+      }
+      draw() {
+        if (this.isHeart) {
+          finCtx.save();
+          finCtx.globalAlpha = Math.max(0, this.life);
+          finCtx.font = `${this.emoji_scale * 22}px serif`;
+          finCtx.fillText(this.heartEmoji, this.x, this.y);
+          finCtx.restore();
+        } else {
+          finCtx.save();
+          finCtx.globalAlpha = Math.max(0, this.life);
+          finCtx.shadowBlur = this.size * 3;
+          finCtx.shadowColor = this.color + '0.9)';
+          finCtx.fillStyle = this.color + this.life + ')';
+          finCtx.beginPath();
+          finCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          finCtx.fill();
+          finCtx.restore();
+        }
+      }
+    }
+
+    function shootHeartFirework(x, y, count) {
+      for (let i = 0; i < count; i++) {
+        finaleParticles.push(new HeartFireworkParticle(x, y));
+      }
+    }
+
+    // Sakura petal rain
+    function spawnSakuraPetals(count) {
+      const emojis = ['🌸','🌺','💗','✨','🌷','💜','⭐'];
+      for (let i = 0; i < count; i++) {
+        const petal = document.createElement('div');
+        petal.classList.add('sakura-petal');
+        petal.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        petal.style.left = (Math.random() * 110 - 5) + 'vw';
+        petal.style.animationDuration = (3.5 + Math.random() * 4.5) + 's';
+        petal.style.animationDelay = (Math.random() * 6) + 's';
+        petal.style.fontSize = (0.7 + Math.random() * 0.9) + 'rem';
+        document.body.appendChild(petal);
+      }
+    }
+
+    // Animate the finale canvas
+    function animateFinale() {
+      if (!finaleRunning) return;
+      finCtx.clearRect(0, 0, finaleCanvas.width, finaleCanvas.height);
+      for (let i = finaleParticles.length - 1; i >= 0; i--) {
+        finaleParticles[i].update();
+        finaleParticles[i].draw();
+        if (finaleParticles[i].life <= 0) finaleParticles.splice(i, 1);
+      }
+      requestAnimationFrame(animateFinale);
+    }
+
+    function launchFinaleSequence() {
+      finaleRunning = true;
+      finaleCanvas.style.opacity = '1';
+      animateFinale();
+
+      // Wave 1: Massive burst from center
+      const cx = screenWidth / 2, cy = screenHeight * 0.38;
+      setTimeout(() => shootHeartFirework(cx, cy, 120), 0);
+      setTimeout(() => shootHeartFirework(cx * 0.3, cy * 0.6, 80), 300);
+      setTimeout(() => shootHeartFirework(cx * 1.7, cy * 0.6, 80), 500);
+      setTimeout(() => shootHeartFirework(cx, cy * 0.4, 90), 700);
+
+      // Wave 2: More bursts
+      setTimeout(() => {
+        shootHeartFirework(cx * 0.5, cy * 1.1, 70);
+        shootHeartFirework(cx * 1.5, cy * 1.1, 70);
+        shootHeartFirework(cx, cy * 0.3, 100);
+      }, 1100);
+
+      // Wave 3: Grand finale burst
+      setTimeout(() => {
+        for (let i = 0; i < 5; i++) {
+          setTimeout(() => {
+            const bx = screenWidth * (0.1 + Math.random() * 0.8);
+            const by = screenHeight * (0.1 + Math.random() * 0.5);
+            shootHeartFirework(bx, by, 90);
+          }, i * 200);
+        }
+      }, 1800);
+
+      // Spawn sakura petals
+      spawnSakuraPetals(35);
+
+      // Reveal love overlay
+      setTimeout(() => {
+        const overlay = document.getElementById('finale-love-overlay');
+        if (overlay) overlay.style.opacity = '1';
+
+        const heartBurst = document.getElementById('finale-heart-burst');
+        if (heartBurst) {
+          heartBurst.style.opacity = '1';
+          heartBurst.style.transform = 'scale(1.25)';
+          setTimeout(() => {
+            if (heartBurst) heartBurst.style.transform = 'scale(1)';
+          }, 700);
+        }
+
+        const mainTxt = document.getElementById('finale-main-text');
+        if (mainTxt) mainTxt.style.opacity = '1';
+
+        const subTxt = document.getElementById('finale-sub-text');
+        if (subTxt) subTxt.style.opacity = '1';
+
+        const heartsRow = document.getElementById('finale-hearts-row');
+        if (heartsRow) heartsRow.style.opacity = '1';
+      }, 900);
+
+      // Continuous gentle bursts after reveal
+      setTimeout(() => {
+        setInterval(() => {
+          if (!finaleRunning) return;
+          const bx = screenWidth * (0.05 + Math.random() * 0.9);
+          const by = screenHeight * (0.05 + Math.random() * 0.55);
+          shootHeartFirework(bx, by, 35);
+        }, 1800);
+      }, 3500);
+    }
 
 
     // Hàm chim mang thư bay vào giữa màn hình
@@ -1496,8 +1702,26 @@
       const chibiHeart = document.getElementById('chibi-love-heart');
       if (chibiHeart) chibiHeart.classList.add('opacity-0');
 
-      const heartQr = document.getElementById('heart-qr-container');
-      if (heartQr) heartQr.style.opacity = '0';
+      // Reset Finale: dừng pháo hoa, ẩn overlay, xóa cánh hoa
+      finaleRunning = false;
+      finaleParticles.length = 0;
+      finaleCanvas.style.opacity = '0';
+      finCtx.clearRect(0, 0, finaleCanvas.width, finaleCanvas.height);
+
+      const overlay = document.getElementById('finale-love-overlay');
+      if (overlay) overlay.style.opacity = '0';
+
+      const mainTxt = document.getElementById('finale-main-text');
+      if (mainTxt) mainTxt.style.opacity = '0';
+      const subTxt = document.getElementById('finale-sub-text');
+      if (subTxt) subTxt.style.opacity = '0';
+      const heartsRow = document.getElementById('finale-hearts-row');
+      if (heartsRow) heartsRow.style.opacity = '0';
+      const finHeart = document.getElementById('finale-heart-burst');
+      if (finHeart) { finHeart.style.opacity = '0'; finHeart.style.transform = 'scale(1)'; }
+
+      // Xóa các cánh hoa anh đào khỏi DOM
+      document.querySelectorAll('.sakura-petal').forEach(p => p.remove());
 
       // Khôi phục animation chân chạy và nhún chibi
       const legs = document.querySelectorAll('.animate-leg-left, .animate-leg-right, .animate-leg-left-boy2, .animate-leg-right-boy2');
