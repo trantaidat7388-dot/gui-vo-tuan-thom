@@ -265,21 +265,33 @@
 
     <!-- Interactive Glowing Envelope -->
     <div class="envelope-wrapper my-8 relative" id="envelope-trigger" style="opacity: 0;">
-      <!-- Left Carrier Bird -->
+      <!-- Left Carrier Firefly -->
       <div id="left-carrier" class="absolute -top-20 -left-16 flex flex-col items-center pointer-events-none select-none z-10" style="opacity: 0;">
-        <span class="text-4xl animate-wing-flap">🕊️</span>
-        <!-- Dashed string connecting dove to envelope top-left -->
-        <svg class="w-16 h-20 overflow-visible -mt-2">
-          <path d="M 12 0 Q 36 30 52 70" fill="none" stroke="#ff758f" stroke-width="2" stroke-dasharray="4,4" />
+        <div class="relative flex items-center justify-center animate-wing-flap">
+          <!-- Glowing firefly body -->
+          <div class="w-5 h-5 bg-[#eaff8c] rounded-full shadow-[0_0_15px_#eaff8c] animate-pulse"></div>
+          <!-- Transparent wings -->
+          <div class="absolute w-3 h-4 bg-white/40 rounded-full -translate-x-3.5 -translate-y-2 rotate-12"></div>
+          <div class="absolute w-3 h-4 bg-white/40 rounded-full translate-x-3.5 -translate-y-2 -rotate-12"></div>
+        </div>
+        <!-- Dashed string connecting firefly to envelope top-left -->
+        <svg class="w-16 h-20 overflow-visible -mt-1">
+          <path d="M 12 0 Q 36 30 52 70" fill="none" stroke="#eaff8c" stroke-width="2" stroke-dasharray="4,4" />
         </svg>
       </div>
 
-      <!-- Right Carrier Bird -->
+      <!-- Right Carrier Firefly -->
       <div id="right-carrier" class="absolute -top-20 -right-16 flex flex-col items-center pointer-events-none select-none z-10" style="opacity: 0;">
-        <span class="text-4xl animate-wing-flap" style="transform: scaleX(-1);">🕊️</span>
-        <!-- Dashed string connecting dove to envelope top-right -->
-        <svg class="w-16 h-20 overflow-visible -mt-2" style="transform: scaleX(-1);">
-          <path d="M 12 0 Q 36 30 52 70" fill="none" stroke="#ff758f" stroke-width="2" stroke-dasharray="4,4" />
+        <div class="relative flex items-center justify-center animate-wing-flap" style="animation-delay: 0.3s;">
+          <!-- Glowing firefly body -->
+          <div class="w-5 h-5 bg-[#eaff8c] rounded-full shadow-[0_0_15px_#eaff8c] animate-pulse"></div>
+          <!-- Transparent wings -->
+          <div class="absolute w-3 h-4 bg-white/40 rounded-full -translate-x-3.5 -translate-y-2 rotate-12"></div>
+          <div class="absolute w-3 h-4 bg-white/40 rounded-full translate-x-3.5 -translate-y-2 -rotate-12"></div>
+        </div>
+        <!-- Dashed string connecting firefly to envelope top-right -->
+        <svg class="w-16 h-20 overflow-visible -mt-1" style="transform: scaleX(-1);">
+          <path d="M 12 0 Q 36 30 52 70" fill="none" stroke="#eaff8c" stroke-width="2" stroke-dasharray="4,4" />
         </svg>
       </div>
 
@@ -387,16 +399,15 @@
       // Có thể dùng ảnh cá nhân từ Imgur, Facebook, Google Drive (lấy link trực tiếp)
       photoUrl: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600",
       
-      // 4. Nhạc nền lãng mạn nhẹ nhàng (Mặc định: Chopin Nocturne Op. 9 No. 2 cực kì êm dịu)
-      // Lời khuyên: Để thay bài "Tìm Em" của ca sĩ bạn thích, hãy upload lên Google Drive/Dropbox/Catbox và lấy link tải trực tiếp (.mp3) để thay vào đây
-      musicUrl: "https://archive.org/download/musopen-chopin/Nocturne%20Op.%209%20no.%202%20in%20E%20flat%20major.mp3",
+      // 4. Nhạc nền lãng mạn nhẹ nhàng (Sử dụng tệp nhạc địa phương Tìm Em.mp3)
+      musicUrl: "Tìm Em.mp3",
       
       // 5. Câu tỏ tình viết tay tự động chạy (Giai đoạn 2)
-      confessionText: "Gửi anh Thơm, Cảm ơn vì đã xuất hiện trong cuộc đời em! Mỗi giây phút ở bên anh đều là những khoảnh khắc tuyệt vời nhất. Làm người yêu em nhé? ❤️",
+      confessionText: "Gửi em Thơm, Cảm ơn vì đã xuất hiện trong cuộc đời anh! Mỗi giây phút ở bên em đều là những khoảnh khắc tuyệt vời nhất đối với anh. Làm người yêu anh nhé? ❤️",
       
       // 6. Tiêu đề và lời nhắn sau khi người ấy ấn "ĐỒNG Ý" (Giai đoạn 3)
-      successTitle: "Em biết ngay mà! 🥰",
-      successText: "Tối nay 7h em qua đón anh đi chơi nhé! Chuẩn bị đẹp trai nha anh yêu! ❤️",
+      successTitle: "Anh biết ngay mà! 🥰",
+      successText: "Tối nay 7h anh qua đón em đi chơi nhé! Chuẩn bị đẹp trai nha em yêu! ❤️",
       
       // 7. Ảnh động GIF hiển thị ở màn hình thành công
       successGifUrl: "https://media.tenor.com/gO1Rl9Z5eqAAAAAi/peach-goma.gif"
@@ -457,8 +468,8 @@
 
     let isEnvelopeOpened = false;
 
-    // Class Trái tim bay lên (Floating Heart)
-    class FloatingHeart {
+    // Class Các hạt bay khắp thiên hà (Galaxy Particle: Trái tim, Ngôi sao, Tinh vân, Sparkle)
+    class GalaxyParticle {
       constructor() {
         this.reset();
         this.y = Math.random() * screenHeight; // Khởi tạo ngẫu nhiên vị trí ban đầu
@@ -467,17 +478,32 @@
       reset() {
         this.x = Math.random() * screenWidth;
         this.y = screenHeight + 20;
-        this.size = 8 + Math.random() * 10;
-        this.speedY = 0.4 + Math.random() * 0.8;
+        this.size = 6 + Math.random() * 12;
+        this.speedY = 0.3 + Math.random() * 0.9;
         this.wobble = Math.random() * Math.PI * 2;
-        this.wobbleSpeed = 0.01 + Math.random() * 0.02;
-        this.opacity = 0.1 + Math.random() * 0.35;
+        this.wobbleSpeed = 0.01 + Math.random() * 0.025;
+        this.opacity = 0.1 + Math.random() * 0.45;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotationSpeed = (Math.random() - 0.5) * 0.02;
+        
+        // Phân loại hạt bay: trái tim, ngôi sao, hành tinh, hạt sáng lấp lánh
+        const types = ['heart', 'star', 'planet', 'sparkle'];
+        this.type = types[Math.floor(Math.random() * types.length)];
+        
+        const colors = [
+          'rgba(255, 117, 143, ', // hồng ngọt ngào
+          'rgba(6, 182, 212, ',  // xanh neon
+          'rgba(192, 132, 252, ', // tím nhạt
+          'rgba(253, 224, 71, '   // vàng lấp lánh
+        ];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
       }
 
       update() {
         this.y -= this.speedY;
         this.wobble += this.wobbleSpeed;
         this.x += Math.sin(this.wobble) * 0.3;
+        this.rotation += this.rotationSpeed;
         if (this.y < -20) {
           this.reset();
         }
@@ -485,29 +511,65 @@
 
       draw() {
         mCtx.save();
-        mCtx.fillStyle = `rgba(255, 117, 143, ${this.opacity})`;
-        mCtx.beginPath();
-        const topCurveHeight = this.size * 0.3;
-        mCtx.moveTo(this.x, this.y + topCurveHeight);
-        mCtx.bezierCurveTo(
-          this.x - this.size / 2, this.y - this.size / 2,
-          this.x - this.size, this.y + this.size / 3,
-          this.x, this.y + this.size
-        );
-        mCtx.bezierCurveTo(
-          this.x + this.size, this.y + this.size / 3,
-          this.x + this.size / 2, this.y - this.size / 2,
-          this.x, this.y + topCurveHeight
-        );
-        mCtx.fill();
+        mCtx.fillStyle = this.color + this.opacity + ')';
+        mCtx.shadowBlur = 8;
+        mCtx.shadowColor = this.color + '0.8)';
+        
+        mCtx.translate(this.x, this.y);
+        mCtx.rotate(this.rotation);
+
+        if (this.type === 'heart') {
+          mCtx.beginPath();
+          const topCurveHeight = this.size * 0.3;
+          mCtx.moveTo(0, topCurveHeight);
+          mCtx.bezierCurveTo(-this.size/2, -this.size/2, -this.size, this.size/3, 0, this.size);
+          mCtx.bezierCurveTo(this.size, this.size/3, this.size/2, -this.size/2, 0, topCurveHeight);
+          mCtx.fill();
+        } else if (this.type === 'star') {
+          // Vẽ ngôi sao 5 cánh
+          mCtx.beginPath();
+          for (let i = 0; i < 5; i++) {
+            mCtx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * this.size,
+                        Math.sin((18 + i * 72) * Math.PI / 180) * this.size);
+            mCtx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * (this.size/2),
+                        Math.sin((54 + i * 72) * Math.PI / 180) * (this.size/2));
+          }
+          mCtx.closePath();
+          mCtx.fill();
+        } else if (this.type === 'planet') {
+          // Vẽ hành tinh nhỏ có vành đai tinh vân
+          mCtx.beginPath();
+          mCtx.arc(0, 0, this.size * 0.6, 0, Math.PI * 2);
+          mCtx.fill();
+          // Vành đai tinh vân bao quanh
+          mCtx.strokeStyle = this.color + (this.opacity * 1.5) + ')';
+          mCtx.lineWidth = 1.5;
+          mCtx.beginPath();
+          mCtx.ellipse(0, 0, this.size, this.size * 0.3, Math.PI / 6, 0, Math.PI * 2);
+          mCtx.stroke();
+        } else {
+          // Hạt sáng lấp lánh (Sparkle) 4 cánh
+          mCtx.beginPath();
+          mCtx.moveTo(0, -this.size);
+          mCtx.lineTo(this.size * 0.2, -this.size * 0.2);
+          mCtx.lineTo(this.size, 0);
+          mCtx.lineTo(this.size * 0.2, this.size * 0.2);
+          mCtx.lineTo(0, this.size);
+          mCtx.lineTo(-this.size * 0.2, this.size * 0.2);
+          mCtx.lineTo(-this.size, 0);
+          mCtx.lineTo(-this.size * 0.2, -this.size * 0.2);
+          mCtx.closePath();
+          mCtx.fill();
+        }
+        
         mCtx.restore();
       }
     }
 
     const floatingHearts = [];
-    const numFloatingHearts = 35; // Số lượng trái tim bay ở nền
+    const numFloatingHearts = 45; // Tăng lên 45 hạt bay trong thiên hà nền
     for (let i = 0; i < numFloatingHearts; i++) {
-      floatingHearts.push(new FloatingHeart());
+      floatingHearts.push(new GalaxyParticle());
     }
 
     // Class Sao băng (Meteor)
