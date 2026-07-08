@@ -1227,6 +1227,17 @@
     const textPoints1 = [];
     const textPoints2 = [];
     let successFrameCount = 0;
+    const TEXT_PHASE = {
+      swirlEnd: 90,
+      morph1End: 145,
+      hold1End: 320,
+      explodeEnd: 365,
+      morph2End: 420,
+      hold2End: 670,
+      coupleStart: 740,
+      moonStart: 840,
+      finaleStart: 980
+    };
 
     // Class Hạt sáng thiên hà morph chữ (Success Particle)
     class SuccessParticle {
@@ -1262,7 +1273,7 @@
       }
 
       update(time) {
-        if (time < 70) {
+        if (time < TEXT_PHASE.swirlEnd) {
           this.angle += this.rotSpeed;
           this.radius -= this.radialSpeed;
           if (this.radius < 5) this.radius = 100 + Math.random() * 300;
@@ -1271,22 +1282,22 @@
           this.opacity += this.blinkSpeed;
           if (this.opacity > 1 || this.opacity < 0.2) this.blinkSpeed = -this.blinkSpeed;
 
-        } else if (time >= 70 && time < 102) {
-          if (time === 70) { this.morphStartX = this.x; this.morphStartY = this.y; }
-          const p1 = (time - 70) / 32;
+        } else if (time >= TEXT_PHASE.swirlEnd && time < TEXT_PHASE.morph1End) {
+          if (time === TEXT_PHASE.swirlEnd) { this.morphStartX = this.x; this.morphStartY = this.y; }
+          const p1 = (time - TEXT_PHASE.swirlEnd) / (TEXT_PHASE.morph1End - TEXT_PHASE.swirlEnd);
           const e1 = p1 * p1 * (3 - 2 * p1);
           this.x = this.morphStartX + (this.targetX1 - this.morphStartX) * e1;
           this.y = this.morphStartY + (this.targetY1 - this.morphStartY) * e1;
           this.opacity = 0.95;
 
-        } else if (time >= 102 && time < 170) {
+        } else if (time >= TEXT_PHASE.morph1End && time < TEXT_PHASE.hold1End) {
           this.x = this.targetX1 + (Math.random() - 0.5) * 0.5;
           this.y = this.targetY1 + (Math.random() - 0.5) * 0.5;
           this.opacity += this.blinkSpeed;
           if (this.opacity > 1 || this.opacity < 0.3) this.blinkSpeed = -this.blinkSpeed;
 
-        } else if (time >= 170 && time < 194) {
-          if (time === 170) {
+        } else if (time >= TEXT_PHASE.hold1End && time < TEXT_PHASE.explodeEnd) {
+          if (time === TEXT_PHASE.hold1End) {
             const angle = Math.random() * Math.PI * 2;
             const force = 3.5 + Math.random() * 8.0;
             this.vx = Math.cos(angle) * force;
@@ -1295,15 +1306,15 @@
           this.x += this.vx; this.y += this.vy;
           this.vx *= 0.93;   this.vy *= 0.93;
 
-        } else if (time >= 194 && time < 226) {
-          if (time === 194) { this.morphStartX2 = this.x; this.morphStartY2 = this.y; }
-          const p2 = (time - 194) / 32;
+        } else if (time >= TEXT_PHASE.explodeEnd && time < TEXT_PHASE.morph2End) {
+          if (time === TEXT_PHASE.explodeEnd) { this.morphStartX2 = this.x; this.morphStartY2 = this.y; }
+          const p2 = (time - TEXT_PHASE.explodeEnd) / (TEXT_PHASE.morph2End - TEXT_PHASE.explodeEnd);
           const e2 = p2 * p2 * (3 - 2 * p2);
           this.x = this.morphStartX2 + (this.targetX2 - this.morphStartX2) * e2;
           this.y = this.morphStartY2 + (this.targetY2 - this.morphStartY2) * e2;
           this.opacity = 0.95;
 
-        } else if (time >= 226 && time < 305) {
+        } else if (time >= TEXT_PHASE.morph2End && time < TEXT_PHASE.hold2End) {
           this.x = this.targetX2 + (Math.random() - 0.5) * 0.5;
           this.y = this.targetY2 + (Math.random() - 0.5) * 0.5;
           this.opacity += this.blinkSpeed;
@@ -1322,9 +1333,9 @@
         fCtx.shadowBlur = this.size * 2.5;
         fCtx.shadowColor = this.color.replace('rgba', 'rgb').split(',').slice(0,3).join(',') + ')';
 
-        if ((time >= 70 && time < 102) || (time >= 194 && time < 226)) {
-          const targetX = time < 102 ? this.targetX1 : this.targetX2;
-          const targetY = time < 102 ? this.targetY1 : this.targetY2;
+        if ((time >= TEXT_PHASE.swirlEnd && time < TEXT_PHASE.morph1End) || (time >= TEXT_PHASE.explodeEnd && time < TEXT_PHASE.morph2End)) {
+          const targetX = time < TEXT_PHASE.morph1End ? this.targetX1 : this.targetX2;
+          const targetY = time < TEXT_PHASE.morph1End ? this.targetY1 : this.targetY2;
           fCtx.strokeStyle = this.color + (this.opacity * 0.4) + ')';
           fCtx.lineWidth = this.size * 0.7;
           fCtx.beginPath();
@@ -1379,18 +1390,55 @@
     }
 
     // Vòng lặp vẽ
+    function drawTextFormationAura(frame) {
+      const inHoldPhase1 = frame >= TEXT_PHASE.morph1End && frame < TEXT_PHASE.hold1End;
+      const inHoldPhase2 = frame >= TEXT_PHASE.morph2End && frame < TEXT_PHASE.hold2End;
+      if (!inHoldPhase1 && !inHoldPhase2) return;
+
+      const cx = screenWidth / 2;
+      const cy = screenHeight / 2;
+      const pulse = 0.55 + Math.sin(frame * 0.11) * 0.25;
+      const radius = Math.min(screenWidth, screenHeight) * (inHoldPhase2 ? 0.55 : 0.48);
+
+      const aura = fCtx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+      aura.addColorStop(0, `rgba(255, 255, 255, ${0.02 * pulse})`);
+      aura.addColorStop(0.4, `rgba(255, 117, 143, ${0.12 * pulse})`);
+      aura.addColorStop(0.7, `rgba(6, 182, 212, ${0.08 * pulse})`);
+      aura.addColorStop(1, 'rgba(6, 182, 212, 0)');
+      fCtx.fillStyle = aura;
+      fCtx.fillRect(0, 0, screenWidth, screenHeight);
+
+      const sweepX = ((frame * 7) % (screenWidth + 260)) - 130;
+      const sweep = fCtx.createLinearGradient(sweepX - 60, 0, sweepX + 60, 0);
+      sweep.addColorStop(0, 'rgba(255,255,255,0)');
+      sweep.addColorStop(0.5, 'rgba(255,255,255,0.11)');
+      sweep.addColorStop(1, 'rgba(255,255,255,0)');
+      fCtx.fillStyle = sweep;
+      fCtx.fillRect(sweepX - 60, 0, 120, screenHeight);
+
+      fCtx.save();
+      fCtx.strokeStyle = `rgba(255, 255, 255, ${0.12 * pulse})`;
+      fCtx.lineWidth = 2;
+      fCtx.setLineDash([5, 9]);
+      fCtx.beginPath();
+      fCtx.arc(cx, cy, radius * 0.78, 0, Math.PI * 2);
+      fCtx.stroke();
+      fCtx.restore();
+    }
+
     function animateFireworks() {
       fCtx.clearRect(0, 0, screenWidth, screenHeight);
 
       if (isSuccessState) {
         successFrameCount++;
+        drawTextFormationAura(successFrameCount);
         successParticles.forEach(p => {
           p.update(successFrameCount);
           p.draw(successFrameCount);
         });
 
-        // Kích hoạt transition 2D running couple ở frame sớm hơn
-        if (successFrameCount === 360) {
+        // Kích hoạt transition 2D running couple sau khi đã đọc đủ chữ
+        if (successFrameCount === TEXT_PHASE.coupleStart) {
           const coupleContainer = document.getElementById('running-couple-container');
           if (coupleContainer) {
             coupleContainer.style.opacity = '1';
@@ -1405,7 +1453,7 @@
         }
 
         // Frame tiếp theo: Cặp đôi dừng chạy, bay lên mặt trăng, mặt trăng đổi sang hình trái tim
-        if (successFrameCount === 440) {
+        if (successFrameCount === TEXT_PHASE.moonStart) {
           // Dừng chuyển động chân chạy và nhún chibi
           const legs = document.querySelectorAll('.animate-leg-left, .animate-leg-right, .animate-leg-left-boy2, .animate-leg-right-boy2');
           legs.forEach(leg => {
@@ -1444,7 +1492,7 @@
         }
 
         // Frame finale: Heart Fireworks + Sakura + Love Message
-        if (successFrameCount === 520) {
+        if (successFrameCount === TEXT_PHASE.finaleStart) {
           launchFinaleSequence();
         }
       }
