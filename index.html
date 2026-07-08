@@ -399,10 +399,15 @@
     
     <!-- Running Couple Animation Container -->
     <div id="running-couple-container" class="absolute inset-0 flex flex-col justify-end items-center pointer-events-none select-none opacity-0 transition-opacity duration-[1500ms] z-10">
-      <!-- Big glowing full moon -->
-      <div class="absolute top-[25%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-gradient-to-b from-yellow-100 to-amber-200/30 shadow-[0_0_60px_rgba(253,224,71,0.25)] z-0 flex items-center justify-center">
-        <!-- Inside moon crater details -->
-        <div class="w-44 h-44 rounded-full bg-black/5 blur-[3px]"></div>
+      
+      <!-- Big glowing moon (round transition to heart) -->
+      <div class="absolute top-[22%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 z-0 flex items-center justify-center">
+        <!-- Round moon -->
+        <div id="moon-round" class="absolute w-44 h-44 rounded-full bg-gradient-to-b from-yellow-100 to-amber-200/30 shadow-[0_0_50px_rgba(253,224,71,0.25)] transition-opacity duration-[1500ms]"></div>
+        <!-- Heart moon SVG -->
+        <svg id="moon-heart" class="absolute w-44 h-44 fill-yellow-100/25 stroke-yellow-200 stroke-[1.5] drop-shadow-[0_0_40px_rgba(253,224,71,0.45)] transition-opacity duration-[1500ms] opacity-0" viewBox="0 0 100 100">
+          <path d="M 50 18 C 35 0, 10 10, 10 42 C 10 68, 50 90, 50 90 C 50 90, 90 68, 90 42 C 90 10, 65 0, 50 18 Z" />
+        </svg>
       </div>
 
       <!-- Two boys running silhouette SVG -->
@@ -423,6 +428,9 @@
 
             <!-- Holding Hands (Connected arms) -->
             <path d="M 35 48 Q 50 56 65 48" fill="none" stroke="#ff758f" stroke-width="4.5" stroke-linecap="round" />
+            
+            <!-- Pulsing love heart emoji in between -->
+            <text id="chibi-love-heart" x="50" y="52" font-size="9" text-anchor="middle" fill="#ff758f" class="opacity-0 transition-opacity duration-1000">❤️</text>
           </g>
           
           <!-- Running Legs -->
@@ -449,6 +457,25 @@
         <!-- Dashed white center line that scrolls -->
         <div class="w-[200%] h-1.5 border-t-2 border-dashed border-white/20 absolute top-1/2 animate-road-scroll"></div>
       </div>
+    </div>
+
+    <!-- Heart-shaped QR Code Container -->
+    <div id="heart-qr-container" class="absolute bottom-20 flex flex-col items-center pointer-events-auto opacity-0 transition-opacity duration-1000 z-30">
+      <div class="relative w-36 h-36 flex items-center justify-center">
+        <!-- Glowing heart background/border -->
+        <svg class="absolute inset-0 w-full h-full fill-[#ff758f]/10 stroke-[#ff758f] stroke-[2.5] drop-shadow-[0_0_15px_rgba(255,117,143,0.7)] animate-pulse" viewBox="0 0 100 100">
+          <path d="M 50 15 C 35 -5, 5 5, 5 40 C 5 70, 50 95, 50 95 C 50 95, 95 70, 95 40 C 95 5, 65 -5, 50 15 Z" stroke-dasharray="200" stroke-dashoffset="0" />
+        </svg>
+        <!-- The QR code inside -->
+        <div class="relative w-22 h-22 bg-white p-1 rounded-lg z-10 shadow-lg">
+          <img id="qr-code-image" src="" alt="QR" class="w-full h-full">
+          <!-- Small center heart logo (100% scannable) -->
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <span class="text-xs">❤️</span>
+          </div>
+        </div>
+      </div>
+      <span class="font-sans text-[9px] text-sweetpink/90 font-bold tracking-wider mt-2.5 bg-black/45 px-3 py-1 rounded-full border border-sweetpink/20">QUÉT MÃ ĐỂ CHIA SẺ TÌNH YÊU NÀY ✨</span>
     </div>
 
     <!-- Replay button absolute at bottom -->
@@ -495,6 +522,10 @@
     document.getElementById('target-name-placeholder').textContent = CONFIG.targetName;
     document.getElementById('envelope-inside-text').textContent = CONFIG.envelopeTitle;
     document.getElementById('target-photo').src = CONFIG.photoUrl;
+
+    // Tự động thiết lập mã QR trỏ đến trang hiện tại
+    const currentUrl = window.location.href;
+    document.getElementById('qr-code-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(currentUrl)}`;
 
     const bgMusic = document.getElementById('bg-music');
     bgMusic.src = CONFIG.musicUrl;
@@ -1116,6 +1147,53 @@
             star.size = 0.5 + Math.random() * 1.5;
           });
         }
+
+        // Frame 820: Cặp đôi dừng chạy, bay lên mặt trăng, mặt trăng đổi sang hình trái tim
+        if (successFrameCount === 820) {
+          // Dừng chuyển động chân chạy và nhún chibi
+          const legs = document.querySelectorAll('.animate-leg-left, .animate-leg-right, .animate-leg-left-boy2, .animate-leg-right-boy2');
+          legs.forEach(leg => {
+            leg.style.animation = 'none';
+            leg.style.transform = 'none';
+          });
+          const chibiGroup = document.querySelector('.animate-chibi-bob');
+          if (chibiGroup) {
+            chibiGroup.style.animation = 'none';
+          }
+
+          // Làm mờ và ẩn thanh đường chạy
+          const road = document.querySelector('.animate-road-scroll');
+          if (road) {
+            road.parentElement.style.opacity = '0';
+            road.parentElement.style.transition = 'opacity 1.5s ease-out';
+          }
+
+          // Cho cặp đôi chibi bay lên mặt trăng
+          gsap.to("#running-couple-container svg", {
+            y: -105,
+            scale: 0.8,
+            duration: 3.5,
+            ease: "power1.inOut"
+          });
+
+          // Đổi mặt trăng tròn thành hình trái tim
+          const moonRound = document.getElementById('moon-round');
+          const moonHeart = document.getElementById('moon-heart');
+          if (moonRound) moonRound.style.opacity = '0';
+          if (moonHeart) moonHeart.style.opacity = '1';
+
+          // Hiển thị tim tình yêu nhỏ đỏ thắm ở giữa 2 chibi
+          const chibiHeart = document.getElementById('chibi-love-heart');
+          if (chibiHeart) chibiHeart.classList.remove('opacity-0');
+        }
+
+        // Frame 960: Hiển thị mã QR trái tim
+        if (successFrameCount === 960) {
+          const heartQr = document.getElementById('heart-qr-container');
+          if (heartQr) {
+            heartQr.style.opacity = '1';
+          }
+        }
       }
 
       requestAnimationFrame(animateFireworks);
@@ -1395,10 +1473,41 @@
       yesScale = 1;
       noScale = 1;
 
-      // Ẩn cặp đôi chạy 2D
+      // Ẩn cặp đôi chạy 2D & reset transform hoạt ảnh bay lên
       const coupleContainer = document.getElementById('running-couple-container');
       if (coupleContainer) {
         coupleContainer.style.opacity = '0';
+        const svg = coupleContainer.querySelector('svg');
+        if (svg) {
+          gsap.set(svg, { y: 0, scale: 1 });
+        }
+        const road = coupleContainer.querySelector('.animate-road-scroll');
+        if (road) {
+          road.parentElement.style.opacity = '1';
+        }
+      }
+
+      // Đặt lại mặt trăng và tim bay
+      const moonRound = document.getElementById('moon-round');
+      const moonHeart = document.getElementById('moon-heart');
+      if (moonRound) moonRound.style.opacity = '1';
+      if (moonHeart) moonHeart.style.opacity = '0';
+
+      const chibiHeart = document.getElementById('chibi-love-heart');
+      if (chibiHeart) chibiHeart.classList.add('opacity-0');
+
+      const heartQr = document.getElementById('heart-qr-container');
+      if (heartQr) heartQr.style.opacity = '0';
+
+      // Khôi phục animation chân chạy và nhún chibi
+      const legs = document.querySelectorAll('.animate-leg-left, .animate-leg-right, .animate-leg-left-boy2, .animate-leg-right-boy2');
+      legs.forEach(leg => {
+        leg.style.animation = '';
+        leg.style.transform = '';
+      });
+      const chibiGroup = document.querySelector('.animate-chibi-bob');
+      if (chibiGroup) {
+        chibiGroup.style.animation = '';
       }
 
       // Đặt lại style nút từ chối
