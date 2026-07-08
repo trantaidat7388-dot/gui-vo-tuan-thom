@@ -380,6 +380,11 @@
       50%  { transform: scale(1.08); opacity: 0.3; }
       100% { transform: scale(0.85); opacity: 0.15; }
     }
+
+    .proposal-btn.completed {
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+    }
   </style>
 </head>
 <body class="dynamic-bg select-none">
@@ -582,12 +587,39 @@
       <!-- Proposal activities -->
       <div id="proposal-actions" class="mt-7 w-full max-w-sm glass-card rounded-2xl p-4 opacity-0 translate-y-4 transition-all duration-700 pointer-events-none">
         <p class="text-center text-xs tracking-wider text-sweetpink/80 mb-3">KHOẢNH KHẮC CẦU HÔN</p>
+        <div class="w-full rounded-xl bg-black/30 border border-white/10 p-2 mb-3">
+          <svg id="proposal-stickman-stage" viewBox="0 0 320 160" class="w-full h-32">
+            <g id="proposal-groom">
+              <circle cx="102" cy="44" r="11" fill="none" stroke="#ff9db3" stroke-width="3"></circle>
+              <line x1="102" y1="55" x2="102" y2="93" stroke="#ff9db3" stroke-width="4" stroke-linecap="round"></line>
+              <line id="groom-arm" x1="102" y1="68" x2="124" y2="78" stroke="#ff9db3" stroke-width="4" stroke-linecap="round"></line>
+              <line x1="102" y1="68" x2="84" y2="81" stroke="#ff9db3" stroke-width="4" stroke-linecap="round"></line>
+              <line x1="102" y1="93" x2="89" y2="123" stroke="#ff9db3" stroke-width="4" stroke-linecap="round"></line>
+              <line x1="102" y1="93" x2="116" y2="123" stroke="#ff9db3" stroke-width="4" stroke-linecap="round"></line>
+            </g>
+
+            <g id="proposal-bride">
+              <circle cx="222" cy="44" r="11" fill="none" stroke="#7de3ff" stroke-width="3"></circle>
+              <line x1="222" y1="55" x2="222" y2="93" stroke="#7de3ff" stroke-width="4" stroke-linecap="round"></line>
+              <line id="bride-arm" x1="222" y1="68" x2="202" y2="79" stroke="#7de3ff" stroke-width="4" stroke-linecap="round"></line>
+              <line x1="222" y1="68" x2="242" y2="81" stroke="#7de3ff" stroke-width="4" stroke-linecap="round"></line>
+              <line x1="222" y1="93" x2="208" y2="123" stroke="#7de3ff" stroke-width="4" stroke-linecap="round"></line>
+              <line x1="222" y1="93" x2="236" y2="123" stroke="#7de3ff" stroke-width="4" stroke-linecap="round"></line>
+            </g>
+
+            <circle id="proposal-ring" cx="132" cy="77" r="5" fill="none" stroke="#ffe27a" stroke-width="3" opacity="0"></circle>
+            <text id="proposal-heart-pop" x="160" y="42" text-anchor="middle" font-size="20" opacity="0">💖</text>
+            <path id="proposal-promise-mark" d="M 144 34 C 154 22 166 48 176 34 C 186 20 198 46 208 34" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0"></path>
+            <text id="proposal-sparkle" x="178" y="76" text-anchor="middle" font-size="16" opacity="0">✨</text>
+          </svg>
+        </div>
         <div class="grid grid-cols-1 gap-2.5">
           <button class="proposal-btn bg-sweetpink/80 hover:bg-sweetpink text-white font-bold rounded-xl py-2.5 text-sm" data-proposal="ring">💍 Đeo nhẫn cho em</button>
           <button class="proposal-btn bg-purple-500/80 hover:bg-purple-500 text-white font-bold rounded-xl py-2.5 text-sm" data-proposal="kiss">😘 Trao nụ hôn đầu tiên</button>
           <button class="proposal-btn bg-cyan-500/80 hover:bg-cyan-500 text-white font-bold rounded-xl py-2.5 text-sm" data-proposal="promise">🤝 Hứa bên nhau trọn đời</button>
         </div>
         <p id="proposal-status" class="text-center text-xs text-gray-200 mt-3 min-h-[1.2rem]">Chọn một khoảnh khắc để tiếp tục màn cầu hôn ✨</p>
+        <p id="proposal-ending-message" class="text-center text-sm font-bold text-yellow-100 mt-2 opacity-0">🎉 Anh chính thức cầu hôn em! Mình cưới nhau nhé 💍</p>
       </div>
     </div>
 
@@ -1575,6 +1607,7 @@
         if (heartsRow) heartsRow.style.opacity = '1';
 
         if (proposalPanel) {
+          resetProposalExperience();
           proposalPanel.style.opacity = '1';
           proposalPanel.style.transform = 'translateY(0)';
           proposalPanel.style.pointerEvents = 'auto';
@@ -1663,8 +1696,18 @@
     const textContainer = document.getElementById('confession-text-box');
     const proposalPanel = document.getElementById('proposal-actions');
     const proposalStatus = document.getElementById('proposal-status');
+    const proposalEndingMessage = document.getElementById('proposal-ending-message');
     const proposalButtons = document.querySelectorAll('.proposal-btn');
+    const proposalGroom = document.getElementById('proposal-groom');
+    const proposalBride = document.getElementById('proposal-bride');
+    const proposalRing = document.getElementById('proposal-ring');
+    const proposalHeartPop = document.getElementById('proposal-heart-pop');
+    const proposalPromiseMark = document.getElementById('proposal-promise-mark');
+    const proposalSparkle = document.getElementById('proposal-sparkle');
     let isEnvelopeTransitioning = false;
+    const completedProposalActions = new Set();
+    let proposalFinaleDone = false;
+    let proposalActionTimeline = null;
 
     // Nổ hoa giấy trái tim khi mở thư (Confetti Effect)
     function spawnConfetti(x, y) {
@@ -1673,22 +1716,99 @@
       }
     }
 
-    function triggerProposalMoment(type) {
+    function resetProposalStageVisuals() {
+      if (proposalActionTimeline) {
+        proposalActionTimeline.kill();
+        proposalActionTimeline = null;
+      }
+      gsap.set(proposalGroom, { x: 0, y: 0, rotation: 0, transformOrigin: '102px 93px' });
+      gsap.set(proposalBride, { x: 0, y: 0, rotation: 0, transformOrigin: '222px 93px' });
+      gsap.set(proposalRing, { opacity: 0, attr: { cx: 132, cy: 77 } });
+      gsap.set(proposalHeartPop, { opacity: 0, y: 0, scale: 1, transformOrigin: '160px 42px' });
+      gsap.set(proposalPromiseMark, { opacity: 0, scale: 1, transformOrigin: '176px 34px' });
+      gsap.set(proposalSparkle, { opacity: 0, y: 0, scale: 1, transformOrigin: '178px 76px' });
+    }
+
+    function playProposalAnimation(type) {
+      resetProposalStageVisuals();
+      proposalActionTimeline = gsap.timeline();
+
+      if (type === 'ring') {
+        proposalActionTimeline
+          .to(proposalGroom, { x: 24, y: 8, rotation: 16, duration: 0.45, ease: "power2.out" })
+          .to(proposalRing, { opacity: 1, duration: 0.15 }, "<")
+          .to(proposalRing, { attr: { cx: 203, cy: 78 }, duration: 0.45, ease: "power2.inOut" })
+          .to(proposalSparkle, { opacity: 1, scale: 1.2, duration: 0.2 }, "-=0.15")
+          .to(proposalSparkle, { opacity: 0, y: -10, duration: 0.35 })
+          .to([proposalGroom, proposalBride], { y: -4, duration: 0.22, yoyo: true, repeat: 1, ease: "sine.inOut" }, "<");
+      } else if (type === 'kiss') {
+        proposalActionTimeline
+          .to(proposalGroom, { x: 36, duration: 0.5, ease: "power2.out" })
+          .to(proposalBride, { x: -30, duration: 0.5, ease: "power2.out" }, "<")
+          .to(proposalHeartPop, { opacity: 1, y: -18, scale: 1.25, duration: 0.35, ease: "back.out(1.8)" })
+          .to(proposalHeartPop, { opacity: 0, y: -30, scale: 1, duration: 0.45, ease: "power1.in" });
+      } else if (type === 'promise') {
+        proposalActionTimeline
+          .to(proposalGroom, { x: 20, duration: 0.4, ease: "power2.out" })
+          .to(proposalBride, { x: -20, duration: 0.4, ease: "power2.out" }, "<")
+          .to(proposalPromiseMark, { opacity: 1, scale: 1.12, duration: 0.35, ease: "power2.out" })
+          .to(proposalPromiseMark, { scale: 0.96, duration: 0.3, yoyo: true, repeat: 1, ease: "sine.inOut" })
+          .to(proposalSparkle, { opacity: 1, y: -8, duration: 0.25 }, "-=0.35")
+          .to(proposalSparkle, { opacity: 0, y: -16, duration: 0.3 });
+      }
+    }
+
+    function triggerProposalFinaleIfDone() {
+      if (proposalFinaleDone || completedProposalActions.size < 3) return;
+      proposalFinaleDone = true;
+      proposalStatus.textContent = "Anh đã làm hết 3 lời hứa, giờ là đoạn kết của chúng mình 💞";
+      if (proposalEndingMessage) {
+        gsap.to(proposalEndingMessage, { opacity: 1, duration: 0.65, ease: "power2.out" });
+      }
+      setTimeout(() => {
+        shootHeartFirework(screenWidth * 0.2, screenHeight * 0.28, 75);
+        shootHeartFirework(screenWidth * 0.5, screenHeight * 0.22, 105);
+        shootHeartFirework(screenWidth * 0.8, screenHeight * 0.28, 75);
+        spawnConfetti(screenWidth * 0.5, screenHeight * 0.3);
+      }, 250);
+    }
+
+    function resetProposalExperience() {
+      completedProposalActions.clear();
+      proposalFinaleDone = false;
+      proposalButtons.forEach(btn => btn.classList.remove('completed'));
+      if (proposalStatus) {
+        proposalStatus.textContent = 'Chọn một khoảnh khắc để tiếp tục màn cầu hôn ✨';
+      }
+      if (proposalEndingMessage) {
+        proposalEndingMessage.style.opacity = '0';
+      }
+      resetProposalStageVisuals();
+    }
+
+    function triggerProposalMoment(type, buttonEl) {
       const labels = {
-        ring: "Em nhận nhẫn rồi nha anh 💍",
-        kiss: "Nụ hôn đầu tiên đã được lưu lại 😘",
-        promise: "Hai đứa mình hứa bên nhau đến bạc đầu 🤍"
+        ring: "Anh quỳ gối đeo nhẫn cho em, em mỉm cười gật đầu 💍",
+        kiss: "Hai đứa tiến lại gần và trao nhau nụ hôn ngọt ngào 😘",
+        promise: "Cùng nắm tay hứa sẽ bên nhau trọn đời 🤝"
       };
-      proposalStatus.textContent = labels[type] || "Khoảnh khắc này thật đẹp!";
+      playProposalAnimation(type);
+      completedProposalActions.add(type);
+
+      if (buttonEl) {
+        buttonEl.classList.add('completed');
+      }
+
+      const progress = `${completedProposalActions.size}/3`;
+      proposalStatus.textContent = `${labels[type] || "Khoảnh khắc này thật đẹp!"} • Hoàn thành ${progress}`;
       gsap.fromTo(proposalStatus, { scale: 0.92, opacity: 0.55 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(1.7)" });
-      spawnConfetti(screenWidth / 2, screenHeight * 0.42);
-      shootHeartFirework(screenWidth * 0.35, screenHeight * 0.34, 45);
-      shootHeartFirework(screenWidth * 0.65, screenHeight * 0.34, 45);
+      shootHeartFirework(screenWidth * 0.5, screenHeight * 0.3, 40);
+      triggerProposalFinaleIfDone();
     }
 
     proposalButtons.forEach(btn => {
       btn.addEventListener('click', () => {
-        triggerProposalMoment(btn.dataset.proposal);
+        triggerProposalMoment(btn.dataset.proposal, btn);
       });
     });
 
@@ -1949,9 +2069,7 @@
         proposalPanel.style.transform = 'translateY(16px)';
         proposalPanel.style.pointerEvents = 'none';
       }
-      if (proposalStatus) {
-        proposalStatus.textContent = 'Chọn một khoảnh khắc để tiếp tục màn cầu hôn ✨';
-      }
+      resetProposalExperience();
 
       // Xóa các cánh hoa anh đào khỏi DOM
       document.querySelectorAll('.sakura-petal').forEach(p => p.remove());
